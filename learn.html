@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Korean Trainer</title>
+
+<!-- PWA meta -->
+<meta name="theme-color" content="#f97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<!-- Flowbite (base styles) -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css" rel="stylesheet"/>
+
+<!-- Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=quiz,playing_cards,dictionary,voice_selection,flip,arrow_back,arrow_forward,shuffle,multimodal_hand_eye,step_over,restart_alt,menu,close" />
+
+<style>
+  .material-symbols-outlined{
+    font-family:"Material Symbols Outlined";
+    font-weight:normal;
+    font-style:normal;
+    font-size:22px;
+    line-height:1;
+    display:inline-block;
+    -webkit-font-feature-settings:"liga";
+    -webkit-font-smoothing:antialiased;
+    font-variation-settings:"FILL" 0,"wght" 400,"GRAD" 0,"opsz" 24
+  }
+
+  :root{
+    --bg:#f6f7fb;
+    --text:#0f172a;
+    --muted:#475569;
+    --card:#fff;
+    --line:#e5e7eb;
+    --accent:#d97706;
+    --accent-2:#f59e0b;
+    --accent-3:#f97316;
+    --grid: rgba(245,158,11,0.08);
+    --grid-strong: rgba(234,88,12,0.12);
+    --cell:44px;
+    --fld-border:#cbd5e1;
+    --fld-focus:#d97706;
+    --fld-radius:12px;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    color:var(--text);
+    background:
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0 / var(--cell) var(--cell),
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0 / var(--cell) var(--cell),
+      linear-gradient(var(--grid-strong) 1px,transparent 1px) 0 0 / calc(var(--cell)*4) calc(var(--cell)*4),
+      linear-gradient(90deg,var(--grid-strong) 1px,transparent 1px) 0 0 / calc(var(--cell)*4) calc(var(--cell)*4),
+      radial-gradient(100% 60% at 50% 0%,rgba(245,158,11,.05),transparent 60%),
+      radial-gradient(80% 70% at 50% 100%,rgba(234,88,12,.05),transparent 60%),
+      var(--bg);
+    background-attachment:fixed,fixed,fixed,fixed,fixed,fixed,fixed;
+    font:16px/1.5 Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;
+    padding-bottom:92px;
+  }
+
+  .wrap{max-width:980px;margin:auto;padding:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:0 0 auto}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#fff7ed;border:1px solid #ffedd5;color:#7c2d12;font-size:13px}
+  .chip{display:inline-flex;align-items:center;padding:6px 12px;border-radius:9999px;font-weight:700;width:max-content;white-space:nowrap;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0}
+  .chip-ok{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+  .chip-bad{background:#fee2e2;color:#7f1d1d;border-color:#fecaca}
+  .chip-muted{background:#e5e7eb;color:#334155;border-color:#e2e8f0}
+  input[type=text]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn-row>button{flex:1 1 140px}
+  .primary{background:linear-gradient(135deg,var(--accent-2),var(--accent-3));color:#fff;border:none;border-radius:12px;padding:12px 14px;font-weight:800}
+  .secondary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .btn-ico{display:inline-flex;align-items:center;gap:8px;justify-content:center}
+  .ghost{background:transparent;color:var(--accent);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px}
+  .input-with-btn{position:relative}
+  .input-with-btn>input{padding-right:7.25rem}
+  .check-in-input{position:absolute;right:10px;top:50%;transform:translateY(-50%);padding:10px 12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent-3));color:#fff;font-weight:800}
+  .big-ko{font-family:"Noto Sans KR",Inter,system-ui;font-size:clamp(28px,6.5vw,48px);font-weight:900}
+  .prompt-en{font-size:clamp(18px,4.5vw,24px);font-weight:800}
+  .note{font-size:12px;color:#64748b}
+
+  .bnav{position:fixed;left:0;bottom:0;z-index:50;width:100%;height:64px;background:#fff;border-top:1px solid var(--line)}
+  .bnav-grid{display:grid;height:100%;grid-template-columns:repeat(3,1fr);max-width:640px;margin:0 auto;font-weight:600}
+  .bnav-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;background:transparent;border:none}
+  .bnav-ico,.bnav-txt{color:#64748b}
+  .bnav-btn.active .bnav-ico,.bnav-btn.active .bnav-txt{color:var(--accent)}
+
+  .searchbar-wrap{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
+  .searchbar-inner{max-width:980px;margin:auto;padding:10px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+  .icon-btn{background:#fff;border:1px solid var(--line);color:#334155;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center}
+  .searchbar-wrap .relative>button[type=submit]{width:auto;padding:8px 12px;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:var(--accent);color:#fff;border:none;border-radius:10px}
+  .searchbar-wrap .relative>button[type=submit]:hover{background:#b45309}
+  .searchbar-wrap input[type=search]{padding-left:2.75rem}
+
+  .drawer{position:fixed;inset:0;z-index:70;pointer-events:none}
+  .drawer.open{pointer-events:auto}
+  .drawer-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.35);opacity:0;transition:opacity .2s}
+  .drawer.open .drawer-backdrop{opacity:1}
+  .drawer-panel{position:absolute;top:0;right:0;height:100%;width:360px;max-width:92vw;background:#fff;border-left:1px solid var(--line);transform:translateX(100%);transition:transform .25s;display:flex;flex-direction:column}
+  .drawer.open .drawer-panel{transform:none}
+  .drawer-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .drawer-body{padding:14px 16px;display:grid;gap:16px}
+
+  .fg{position:relative;display:grid;grid-template-rows:auto auto}
+  .fg input{width:100%;padding:18px 14px 14px;border:1.5px solid var(--fld-border);border-radius:var(--fld-radius);background:#fff;outline:none}
+  .fg label{position:absolute;left:12px;top:12px;padding:0 6px;background:#fff;color:#64748b;pointer-events:none;transform-origin:left top;transition:transform .12s,color .12s}
+  .fg .helper{margin:6px 8px 0;font-size:12px;color:#6b7280}
+  .fg input:focus{border-color:var(--fld-focus);box-shadow:0 0 0 1.5px color-mix(in oklab,var(--fld-focus) 30%,transparent)}
+  .fg input:focus+label,
+  .fg input:not(:placeholder-shown)+label{
+    transform:translateY(-18px) scale(.86);
+    color:var(--fld-focus);
+    background:#fff;
+    border-radius:6px
+  }
+
+  .voc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  @media (max-width:1100px){.voc-grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:800px){.voc-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.voc-grid{grid-template-columns:1fr}}
+  .voc-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;user-select:none}
+  .voc-ko{font-family:"Noto Sans KR",Inter;font-weight:900;font-size:22px}
+  .voc-rr{color:#1e3a8a;font-weight:700;margin-top:6px}
+  .voc-en{color:#475569;margin-top:6px}
+
+  .krw-roman{font-size:.95rem !important;line-height:1.3rem !important;font-weight:600}
+  .krw-hangul{font-size:1.15rem !important;line-height:1.6rem !important;font-weight:700;color:#9a3412;cursor:pointer}
+  .krw-hangul:active{opacity:.85}
+</style>
+</head>
+<body>
+
+<!-- STICKY SEARCH NAV -->
+<div class="searchbar-wrap">
+  <div class="searchbar-inner">
+    <form id="navSearchForm" class="w-full">
+      <label for="default-search" class="sr-only">Search</label>
+      <div class="relative">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          </svg>
+        </div>
+        <input type="search" id="default-search"
+               class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-500 focus:border-orange-500"
+               placeholder="Search vocab (ko / romanization / English)…"/>
+        <button type="submit">Search</button>
+      </div>
+    </form>
+    <button id="btnBurger" class="icon-btn" aria-label="Open menu" aria-expanded="false">
+      <span class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
+</div>
+
+<!-- Settings Drawer -->
+<div id="drawer" class="drawer" aria-hidden="true">
+  <button id="drawerBackdrop" class="drawer-backdrop" aria-label="Close"></button>
+  <aside class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-head">
+      <strong id="drawerTitle">Settings</strong>
+      <button id="btnDrawerClose" class="icon-btn" aria-label="Close menu">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <div class="fg">
+        <input id="startIdx" type="number" min="1" value="1" placeholder=" "/>
+        <label for="startIdx">Coverage start*</label>
+        <small class="helper">Start of Coverage</small>
+      </div>
+      <div class="fg">
+        <input id="endIdx" type="number" min="1" value="17" placeholder=" "/>
+        <label for="endIdx">Coverage end*</label>
+        <small class="helper">End of Coverage</small>
+      </div>
+      <div class="fg">
+        <input id="krwInput" type="text" inputmode="numeric" placeholder=" " />
+        <label for="krwInput">Number → Korean Won</label>
+        <small class="helper krw-roman" id="krwOutRoman">—</small>
+        <span class="helper krw-hangul" id="krwOutHangul" title="Click to speak">—</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="wrap">
+
+  <!-- Quiz bar (shown on Quiz) -->
+  <div id="quizBar" class="card" style="display:none;margin-bottom:12px">
+    <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+      <strong style="font-weight:800">Quiz</strong>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label for="quizMode" class="sr-only">Mode</label>
+        <select id="quizMode" class="border border-gray-300 rounded-lg p-2 text-sm">
+          <option value="A" selected>Korean → English</option>
+          <option value="B">English → Hangul/Romanization</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz A -->
+  <div class="card" id="quizA" style="display:none">
+    <div class="row">
+      <div class="pill">Item <span id="aNow">0</span>/<span id="aTotal">0</span></div>
+      <div class="pill">Score: <strong id="aScore">0</strong></div>
+      <div class="pill">Streak: <strong id="aStreak">0</strong></div>
+      <div id="aChip" class="chip chip-muted">Listening…</div>
+    </div>
+    <div class="text-center" style="margin-top:10px">
+      <div class="big-ko" id="aKo">-</div>
+      <div class="note" id="aId"></div>
+    </div>
+    <div id="aIO" class="input-with-btn" style="margin-top:10px">
+      <input id="aAnswer" type="text" placeholder="Type the English meaning." autocomplete="off">
+      <button id="aCheck" class="check-in-input">Submit</button>
+    </div>
+    <div id="aActions" class="btn-row" style="margin-top:10px">
+      <button id="aSpeak" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">voice_selection</span> Speak
+      </button>
+      <button id="aReveal" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">multimodal_hand_eye</span> Reveal
+      </button>
+      <button id="aSkip" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">step_over</span> Skip
+      </button>
+    </div>
+    <div class="btn-row" id="aRetryWrap" style="display:none;margin-top:10px">
+      <button id="aRetry" class="primary btn-ico">
+        <span class="material-symbols-outlined">restart_alt</span> Retry
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz B -->
+  <div class="card" id="quizB" style="display:none;margin-top:12px">
+    <div class="row">
+      <div class="pill">Item <span id="bNow">0</span>/<span id="bTotal">0</span></div>
+      <div class="pill">Score: <strong id="bScore">0</strong></div>
+      <div class="pill">Streak: <strong id="bStreak">0</strong></div>
+      <div id="bChip" class="chip chip-muted">Ready</div>
+    </div>
+    <div class="text-center" style="margin-top:10px">
+      <div class="prompt-en" id="bEn">—</div>
+      <div class="note" id="bId"></div>
+    </div>
+    <div id="bIO" class="input-with-btn" style="margin-top:10px">
+      <input id="bAnswer" type="text" placeholder="Type Hangul (언니) or romanization…" autocomplete="off">
+      <button id="bCheck" class="check-in-input">Submit</button>
+    </div>
+    <div id="bActions" class="btn-row" style="margin-top:10px">
+      <button id="bReveal" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">multimodal_hand_eye</span> Reveal
+      </button>
+      <button id="bSkip" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">step_over</span> Skip
+      </button>
+    </div>
+    <div class="btn-row" id="bRetryWrap" style="display:none;margin-top:10px">
+      <button id="bRetry" class="primary btn-ico">
+        <span class="material-symbols-outlined">restart_alt</span> Retry
+      </button>
+    </div>
+  </div>
+
+  <!-- Flashcards -->
+  <div class="card" id="practiceArea" style="display:none;margin-top:12px">
+    <div class="row">
+      <div class="pill">Card <span id="pNow">0</span>/<span id="pTotal">0</span></div>
+      <div class="pill">Flashcards</div>
+    </div>
+    <div class="text-center" style="margin-top:10px">
+      <div class="big-ko" id="pKo">-</div>
+      <div class="note" id="pId"></div>
+      <div class="note" id="pPron" style="color:#9a3412"></div>
+    </div>
+    <div class="btn-row" style="margin-top:10px">
+      <button id="pSpeak" class="secondary btn-ico" tabindex="-1">
+        <span class="material-symbols-outlined">voice_selection</span> Speak
+      </button>
+      <button id="pFlip" class="primary btn-ico">
+        <span class="material-symbols-outlined">flip</span> Flip
+      </button>
+    </div>
+    <div class="btn-row" style="margin-top:10px">
+      <button id="pPrev" class="secondary btn-ico">
+        <span class="material-symbols-outlined">arrow_back</span> Prev
+      </button>
+      <button id="pNext" class="secondary btn-ico">
+        <span class="material-symbols-outlined">arrow_forward</span> Next
+      </button>
+    </div>
+    <button id="pShuffle" class="ghost btn-ico" style="width:100%;margin-top:10px">
+      <span class="material-symbols-outlined">shuffle</span> Shuffle
+    </button>
+  </div>
+
+  <!-- Vocab -->
+  <div class="card" id="vocabArea" style="display:none;margin-top:12px;margin-bottom:70px;">
+    <div class="row" style="margin-bottom:10px">
+      <div class="pill">Click Menu to change coverage</div>
+      <div class="pill"><span id="vCount">0</span> items</div>
+    </div>
+    <div id="vocabGrid" class="voc-grid"></div>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<div class="bnav">
+  <div class="bnav-grid">
+    <button id="navFlash" type="button" class="bnav-btn">
+      <span class="material-symbols-outlined bnav-ico mb-1">playing_cards</span>
+      <span class="bnav-txt text-sm">Flashcards</span>
+    </button>
+    <button id="navQuiz" type="button" class="bnav-btn">
+      <span class="material-symbols-outlined bnav-ico mb-1">quiz</span>
+      <span class="bnav-txt text-sm">Quiz</span>
+    </button>
+    <button id="navVocab" type="button" class="bnav-btn">
+      <span class="material-symbols-outlined bnav-ico mb-1">dictionary</span>
+      <span class="bnav-txt text-sm">Vocab</span>
+    </button>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  const $ = s => document.querySelector(s);
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+  /* ===== KRW converter ===== */
+  const DIGITS_H = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+  const SMALL_UNITS_H = ["", "십", "백", "천"];
+  const BIG_UNITS_H   = ["", "만", "억", "조", "경"];
+  const DIGITS_R = ["", "il", "i", "sam", "sa", "o", "yuk", "chil", "pal", "gu"];
+  const SMALL_UNITS_R = ["", "sip", "baek", "cheon"];
+  const BIG_UNITS_R   = ["", "man", "eok", "jo", "gyeong"];
+
+  function chunk4ToHangul(numStr){
+    const s = numStr.padStart(4,"0");
+    let out = "";
+    for (let i=0;i<4;i++){
+      const n = s.charCodeAt(i)-48;
+      if (!n) continue;
+      const unit = SMALL_UNITS_H[3-i];
+      const digit = (n===1 && unit) ? "" : DIGITS_H[n];
+      out += digit + unit;
+    }
+    return out;
+  }
+  function chunk4ToRoman(numStr){
+    const s = numStr.padStart(4,"0");
+    let out = "";
+    for (let i=0;i<4;i++){
+      const n = s.charCodeAt(i)-48;
+      if (!n) continue;
+      const unit = SMALL_UNITS_R[3-i];
+      const digit = (n===1 && unit) ? "" : DIGITS_R[n];
+      out += (digit?digit:"") + (unit?unit:"");
+      if (i<3) out += " ";
+    }
+    return out.trim();
+  }
+  function intToKoreanHangul(n){
+    if (n===0) return "영 원";
+    const parts = [];
+    const numStr = String(n);
+    let idx=0,i=numStr.length;
+    while(i>0){
+      const start=Math.max(0,i-4);
+      const chunk=numStr.slice(start,i);
+      const h=chunk4ToHangul(chunk);
+      if(h) parts.unshift(h+BIG_UNITS_H[idx]);
+      idx++;i=start;
+    }
+    return parts.join(" ")+" 원";
+  }
+  function intToRomanized(n){
+    if (n===0) return "yeong won";
+    const parts=[];
+    const numStr=String(n);
+    let idx=0,i=numStr.length;
+    while(i>0){
+      const start=Math.max(0,i-4);
+      const chunk=numStr.slice(start,i);
+      const r=chunk4ToRoman(chunk);
+      if(r) parts.unshift((r+" "+BIG_UNITS_R[idx]).trim());
+      idx++;i=start;
+    }
+    return (parts.join(" ")+" won").replace(/\s{2,}/g," ").trim();
+  }
+  (function initKRW(){
+    const inp=$("#krwInput"),outR=$("#krwOutRoman"),outH=$("#krwOutHangul");
+    if(!inp||!outR||!outH) return;
+    const sanitize=v=>(v||"").replace(/[^\d]/g,"");
+    const render=()=>{
+      const raw=sanitize(inp.value);
+      if(!raw){
+        outR.textContent="—";
+        outH.textContent="—";
+        outH.dataset.say="";
+        return;
+      }
+      const num=Number(raw.replace(/^0+(?=\d)/,""));
+      const hangul=intToKoreanHangul(num);
+      const roman=intToRomanized(num);
+      outR.textContent=roman;
+      outH.textContent=hangul;
+      outH.dataset.say=hangul;
+    };
+    inp.addEventListener("input",e=>{
+      const cur=sanitize(e.target.value);
+      if(e.target.value!==cur) e.target.value=cur;
+      render();
+    });
+    outH.addEventListener("click",()=>{
+      const text=outH.dataset.say||"";
+      if(!text) return;
+      if("speechSynthesis" in window){
+        speechSynthesis.cancel();
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang="ko-KR";
+        u.rate=1;u.pitch=1;u.volume=1;
+        speechSynthesis.speak(u);
+      }
+    });
+    render();
+  })();
+
+  /* ===== Data ===== */
+  const ITEMS = [
+    {id:1,ko:"가족",en:"family"},
+    {id:2,ko:"할아버지",en:"grandfather"},
+    {id:3,ko:"할머니",en:"grandmother"},
+    {id:4,ko:"아버지",en:"father"},
+    {id:5,ko:"어머니",en:"mother"},
+    {id:6,ko:"형",en:"older brother"},
+    {id:7,ko:"누나",en:"older sister"},
+    {id:8,ko:"부인",en:"wife"},
+    {id:9,ko:"여동생",en:"younger sister"},
+    {id:10,ko:"남동생",en:"younger brother"},
+    {id:11,ko:"남자",en:"man"},
+    {id:12,ko:"여자",en:"woman"},
+    {id:13,ko:"오빠",en:"older brother"},
+    {id:14,ko:"언니",en:"older sister"},
+    {id:15,ko:"남편",en:"husband"},
+    {id:16,ko:"아들",en:"son"},
+    {id:17,ko:"딸",en:"daughter"},
+    {id:18,ko:"부지런하다",en:"diligent"},
+    {id:19,ko:"날짜",en:"date"},
+    {id:20,ko:"요일",en:"days of the week"},
+    {id:21,ko:"지난달",en:"last month"},
+    {id:22,ko:"이번 달",en:"this month"},
+    {id:23,ko:"다음 달",en:"next month"},
+    {id:24,ko:"지난주",en:"last week"},
+    {id:25,ko:"이번 주",en:"this week"},
+    {id:26,ko:"다음 주",en:"next week"},
+    {id:27,ko:"주중",en:"weekdays"},
+    {id:28,ko:"주말",en:"weekends"},
+    {id:29,ko:"작년",en:"last year"},
+    {id:30,ko:"올해",en:"this year"},
+    {id:31,ko:"내년",en:"next year"},
+    {id:32,ko:"공원",en:"park"},
+    {id:33,ko:"커피숍",en:"coffee shop"},
+    {id:34,ko:"서점",en:"bookstore"},
+    {id:35,ko:"도서관",en:"library"},
+    {id:36,ko:"백화점",en:"department store"},
+    {id:37,ko:"노래방",en:"karaoke"},
+    {id:38,ko:"PC 방",en:"computer shop"},
+    {id:39,ko:"극장",en:"theatre"},
+    {id:40,ko:"노래하다",en:"to sing"},
+    {id:41,ko:"게임하다",en:"to play a game"},
+    {id:42,ko:"산책하다",en:"to take a walk"},
+    {id:43,ko:"쇼핑하다",en:"to shop"},
+    {id:44,ko:"음식을 만들다",en:"to cook food"},
+    {id:45,ko:"추석",en:"thanksgiving day"},
+    {id:46,ko:"설날",en:"new year"},
+    {id:47,ko:"어린이날",en:"children's day"},
+    {id:48,ko:"한글날",en:"hangeul day"},
+    {id:49,ko:"크리스마스",en:"christmas"},
+    {id:50,ko:"사과",en:"apple"},
+    {id:51,ko:"오렌지",en:"orange"},
+    {id:52,ko:"포도",en:"grapes"},
+    {id:53,ko:"수박",en:"watermelon"},
+    {id:54,ko:"물",en:"water"},
+    {id:55,ko:"주스",en:"juice"},
+    {id:56,ko:"우유",en:"milk"},
+    {id:57,ko:"빵",en:"bread"},
+    {id:58,ko:"라면",en:"instant noodles"},
+    {id:59,ko:"과자",en:"snack"},
+    {id:60,ko:"초콜릿",en:"chocolate"},
+    {id:61,ko:"아이스크림",en:"ice cream"},
+    {id:62,ko:"돈(현금)",en:"cash"},
+    {id:63,ko:"동전",en:"coins"},
+    {id:64,ko:"지폐",en:"paper bill"},
+    {id:65,ko:"신용카드",en:"credit card"},
+    {id:66,ko:"값(가격)",en:"price"},
+    {id:67,ko:"싸다",en:"cheap"},
+    {id:68,ko:"비싸다",en:"expensive"},
+    {id:69,ko:"(값을) 깎다",en:"to bargain"},
+    {id:70,ko:"넣다",en:"to put in"},
+    {id:71,ko:"싸다(포장하다)",en:"to wrap"},
+    {id:72,ko:"바꾸다(교환하다)",en:"to exchange"},
+    {id:73,ko:"환불하다",en:"to refund"},
+    {id:74,ko:"의류",en:"clothing"},
+    {id:75,ko:"티셔츠",en:"t shirt"},
+    {id:76,ko:"자켓",en:"jacket"},
+    {id:77,ko:"운동화",en:"sports shoes"},
+    {id:78,ko:"구두",en:"shoes"},
+    {id:79,ko:"슬리퍼",en:"slipper"},
+    {id:80,ko:"장화",en:"boots"},
+    {id:81,ko:"양말",en:"socks"},
+    {id:82,ko:"장갑",en:"gloves"},
+    {id:83,ko:"목도리",en:"scarf"},
+    {id:84,ko:"넥타이",en:"necktie"},
+    {id:85,ko:"선글라스",en:"sunglasses"},
+    {id:86,ko:"옥상",en:"rooftop"},
+    {id:87,ko:"계단",en:"stairs"},
+    {id:88,ko:"건물",en:"building"},
+    {id:89,ko:"내려가다",en:"to go down"},
+    {id:90,ko:"나가다",en:"to go out"},
+    {id:91,ko:"올라가다",en:"to go up"},
+    {id:92,ko:"들어가다",en:"to enter, go in"},
+    {id:93,ko:"올라오다",en:"to come up"},
+    {id:94,ko:"나오다",en:"to come out"},
+    {id:95,ko:"들어오다",en:"to come in"},
+    {id:96,ko:"돌아오다",en:"to come back"},
+    {id:97,ko:"돌아가다",en:"to go back"},
+    {id:98,ko:"육교",en:"overpass"},
+    {id:99,ko:"이정표",en:"road sign"},
+    {id:100,ko:"신호등",en:"traffic lights"},
+    {id:101,ko:"길거리",en:"street"}
+  ];
+  const MAX_ID = ITEMS.reduce((m,x)=>Math.max(m,x.id),0);
+
+  /* ===== Romanization engine with your rules ===== */
+
+  const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+  const JUNG = ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
+  const JONG = ["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
+  const RR_CHO = {
+    "ㄱ":"g","ㄲ":"kk","ㄴ":"n","ㄷ":"d","ㄸ":"tt","ㄹ":"r","ㅁ":"m","ㅂ":"b","ㅃ":"pp",
+    "ㅅ":"s","ㅆ":"ss","ㅇ":"","ㅈ":"j","ㅉ":"jj","ㅊ":"ch","ㅋ":"k","ㅌ":"t","ㅍ":"p","ㅎ":"h"
+  };
+  const RR_JUNG = {
+    "ㅏ":"a","ㅐ":"ae","ㅑ":"ya","ㅒ":"yae","ㅓ":"eo","ㅔ":"e","ㅕ":"yeo","ㅖ":"ye",
+    "ㅗ":"o","ㅘ":"wa","ㅙ":"wae","ㅚ":"oe",
+    "ㅛ":"yo",
+    "ㅜ":"u","ㅝ":"wo","ㅞ":"we","ㅟ":"wi",
+    "ㅠ":"yu",
+    "ㅡ":"eu",
+    "ㅢ":"ui",
+    "ㅣ":"i"
+  };
+  const RR_JONG = {
+    "":"", "ㄱ":"k","ㄲ":"k","ㄳ":"k",
+    "ㄴ":"n","ㄵ":"n","ㄶ":"n",
+    "ㄷ":"t",
+    "ㄹ":"l","ㄺ":"k","ㄻ":"m","ㄼ":"l","ㄽ":"l","ㄾ":"l","ㄿ":"p","ㅀ":"l",
+    "ㅁ":"m",
+    "ㅂ":"p","ㅄ":"p",
+    "ㅅ":"t","ㅆ":"t",
+    "ㅇ":"ng",
+    "ㅈ":"t","ㅊ":"t","ㅋ":"k","ㅌ":"t","ㅍ":"p","ㅎ":"t"
+  };
+
+  function isHangulSyllable(ch){
+    const c = ch.charCodeAt(0);
+    return c>=0xAC00 && c<=0xD7A3;
+  }
+  function decomposeSyllable(ch){
+    const code = ch.charCodeAt(0)-0xAC00;
+    const cho = Math.floor(code/588);
+    const jung = Math.floor((code%588)/28);
+    const jong = code%28;
+    return {cho:CHO[cho],jung:JUNG[jung],jong:JONG[jong]};
+  }
+
+  // Resyllabification (liaison) with your constraints:
+  // - handle specific double batchim splits
+  // - DO NOT move final ㅇ
+  function applyLiaison(sylls){
+    for(let i=0;i<sylls.length-1;i++){
+      const c = sylls[i];
+      const n = sylls[i+1];
+      if(!c || !n) continue;
+      if(!c.jong || !n.cho) continue;
+      if(n.cho === "ㅇ" && n.jung){
+        switch(c.jong){
+          case "ㄳ": c.jong="ㄱ"; n.cho="ㅅ"; break;
+          case "ㄵ": c.jong="ㄴ"; n.cho="ㅈ"; break;
+          case "ㄶ": c.jong="ㄴ"; n.cho="ㅎ"; break;
+          case "ㄺ": c.jong="ㄹ"; n.cho="ㄱ"; break;
+          case "ㄻ": c.jong="ㄹ"; n.cho="ㅁ"; break;
+          case "ㄼ": c.jong="ㄹ"; n.cho="ㅂ"; break;
+          case "ㄽ": c.jong="ㄹ"; n.cho="ㅅ"; break;
+          case "ㄾ": c.jong="ㄹ"; n.cho="ㅌ"; break;
+          case "ㄿ": c.jong="ㄹ"; n.cho="ㅍ"; break;
+          case "ㅀ": c.jong="ㄹ"; n.cho="ㅎ"; break;
+          case "ㅄ": c.jong="ㅂ"; n.cho="ㅅ"; break;
+          default:
+            // default: only if jong is not ㅇ
+            if(c.jong !== "ㅇ"){
+              n.cho = c.jong;
+              c.jong = "";
+            }
+        }
+      }
+    }
+    return sylls;
+  }
+
+  // Assimilation according to your 16-rule sheet
+  function applyAssimilation(sylls){
+    const palV = new Set(["ㅣ","ㅕ","ㅑ","ㅠ","ㅛ","ㅖ","ㅒ"]);
+
+    for (let i = 0; i < sylls.length - 1; i++) {
+      const c = sylls[i];
+      const n = sylls[i + 1];
+      if (!c || !n) continue;
+
+      let cod = c.jong;
+      let on  = n.cho;
+      if (!cod || !on) continue;
+
+      // 1) Nasalization before ㄴ or ㅁ
+      if (on === "ㄴ" || on === "ㅁ") {
+        if (["ㄱ","ㄲ","ㅋ","ㄳ","ㄺ"].includes(cod)) {
+          c.jong = "ㅇ";
+        } else if (["ㄷ","ㅌ","ㅅ","ㅆ","ㅈ","ㅊ","ㅎ"].includes(cod)) {
+          c.jong = "ㄴ";
+        } else if (["ㅂ","ㅍ","ㅄ"].includes(cod)) {
+          c.jong = "ㅁ";
+        }
+        cod = c.jong;
+      }
+
+      // 2) Lateralization ONLY for ㄴ + ㄹ (신라)
+      if (cod === "ㄴ" && on === "ㄹ") {
+        c.jong = "ㄹ";
+        n.cho = "ㄹ";
+        cod = c.jong;
+        on = n.cho;
+      }
+
+      // 3) ㅎ assimilation (ㅎ final or complex finals with ㅎ)
+      if (cod === "ㅎ") {
+        if (on === "ㄱ") { c.jong = ""; n.cho = "ㅋ"; }
+        else if (on === "ㄷ") { c.jong = ""; n.cho = "ㅌ"; }
+        else if (on === "ㅂ") { c.jong = ""; n.cho = "ㅍ"; }
+        else if (on === "ㅈ") { c.jong = ""; n.cho = "ㅊ"; }
+        cod = c.jong;
+        on = n.cho;
+      }
+
+      if (cod === "ㄶ" || cod === "ㅀ") {
+        if (on === "ㅇ") {
+          c.jong = (cod === "ㄶ") ? "ㄴ" : "ㄹ";
+        } else if (on === "ㄱ") {
+          c.jong = ""; n.cho = "ㅋ";
+        } else if (on === "ㄷ") {
+          c.jong = ""; n.cho = "ㅌ";
+        } else if (on === "ㅂ") {
+          c.jong = ""; n.cho = "ㅍ";
+        } else if (on === "ㅈ") {
+          c.jong = ""; n.cho = "ㅊ";
+        }
+        cod = c.jong;
+        on = n.cho;
+      }
+
+      // 4) Palatalization: 받침 ㄷ/ㅌ + (ㅇ + palatal vowel)
+      if ((cod === "ㄷ" || cod === "ㅌ") &&
+          on === "ㅇ" &&
+          palV.has(n.jung)) {
+        if (cod === "ㄷ") {
+          c.jong = "";
+          n.cho = "ㅈ";
+        } else if (cod === "ㅌ") {
+          c.jong = "";
+          n.cho = "ㅊ";
+        }
+        cod = c.jong;
+        on = n.cho;
+      }
+    }
+
+    return sylls;
+  }
+
+  function romanizeSyllable(s){
+    return (RR_CHO[s.cho]||"") + (RR_JUNG[s.jung]||"") + (RR_JONG[s.jong]||"");
+  }
+
+  function splitVariants(text){
+    const m = text.match(/^(.+?)\((.+?)\)$/);
+    if (!m) return [text];
+    // Example: 싸다(포장하다) -> ["싸다", "포장하다"]
+    return [m[1], m[2]];
+  }
+
+  function romanizeHangulWord(word){
+    const sylls=[];
+    for(const ch of word){
+      if(isHangulSyllable(ch)) sylls.push(decomposeSyllable(ch));
+    }
+    if(!sylls.length) return word;
+    applyLiaison(sylls);
+    applyAssimilation(sylls);
+    return sylls.map(romanizeSyllable).join("");
+  }
+
+  function romanizeHangulRR(text){
+    const variants = splitVariants(text);
+    if (variants.length > 1){
+      return variants
+        .map(v => romanizeHangulRR(v.trim()))
+        .filter(Boolean)
+        .join(" / ");
+    }
+    let result="",buf="";
+    const flush=()=>{if(buf){result+=romanizeHangulWord(buf);buf="";}};
+    for(const ch of text){
+      if(isHangulSyllable(ch)) buf+=ch;
+      else { flush(); result+=ch; }
+    }
+    flush();
+    return result.replace(/\s+/g," ").trim();
+  }
+
+  const normEn = s => (s||"").toLowerCase().replace(/^to\s+/,"").replace(/['’]/g,"").replace(/[^a-z0-9]+/g," ").trim();
+  const normKo = s => (s||"").replace(/\s+/g,"").trim();
+  const normRR = s => romanizeHangulRR(s).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+
+  function speak(text){
+    if(!("speechSynthesis" in window)) return;
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="ko-KR";
+    u.rate=.95;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }
+
+  /* ===== Coverage with localStorage ===== */
+  const LS_KEYS={start:"kt_cov_start",end:"kt_cov_end"};
+  const startEl=$("#startIdx"),endEl=$("#endIdx");
+  let start=1,end=17;
+
+  function clampNum(v,lo,hi){
+    v=parseInt(v,10);
+    if(Number.isNaN(v)) return lo;
+    return Math.max(lo,Math.min(hi,v));
+  }
+  function loadCoverageDefaults(){
+    const hasStart=localStorage.getItem(LS_KEYS.start)!==null;
+    const hasEnd=localStorage.getItem(LS_KEYS.end)!==null;
+    const s=hasStart?localStorage.getItem(LS_KEYS.start):"1";
+    const e=hasEnd?localStorage.getItem(LS_KEYS.end):"17";
+    start=clampNum(s,1,9999);
+    end=clampNum(e,1,9999);
+    if(startEl) startEl.value=String(start);
+    if(endEl) endEl.value=String(end);
+    if(!hasStart) localStorage.setItem(LS_KEYS.start,String(start));
+    if(!hasEnd) localStorage.setItem(LS_KEYS.end,String(end));
+  }
+  loadCoverageDefaults();
+
+  function coverage(){
+    const lo=Math.max(1,Math.min(start,end));
+    const hiCap=MAX_ID||9999;
+    const hi=Math.max(1,Math.min(hiCap,Math.max(start,end)));
+    return ITEMS.filter(x=>x.id>=lo && x.id<=hi);
+  }
+
+  [startEl,endEl].forEach(el=>el && el.addEventListener("input",()=>{
+    start=clampNum(startEl.value||"1",1,9999);
+    end=clampNum(endEl.value||"17",1,9999);
+    localStorage.setItem(LS_KEYS.start,String(start));
+    localStorage.setItem(LS_KEYS.end,String(end));
+    refreshCurrent();
+  }));
+
+  /* ===== Drawer ===== */
+  const drawer=$("#drawer"),btnBurger=$("#btnBurger"),btnDrawerClose=$("#btnDrawerClose"),drawerBackdrop=$("#drawerBackdrop");
+  function openDrawer(open){
+    drawer.classList.toggle("open",!!open);
+    drawer.setAttribute("aria-hidden",(!open).toString());
+    btnBurger.setAttribute("aria-expanded",(!!open).toString());
+    document.body.style.overflow=open?"hidden":"";
+  }
+  btnBurger.addEventListener("click",()=>openDrawer(!drawer.classList.contains("open")));
+  btnDrawerClose.addEventListener("click",()=>openDrawer(false));
+  drawerBackdrop.addEventListener("click",()=>openDrawer(false));
+  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&drawer.classList.contains("open"))openDrawer(false)});
+
+  /* ===== Search -> Vocab ===== */
+  let searchQuery="";
+  $("#navSearchForm").addEventListener("submit",e=>{
+    e.preventDefault();
+    searchQuery=$("#default-search").value.trim().toLowerCase();
+    showVocab();
+  });
+  $("#default-search").addEventListener("input",()=>{
+    searchQuery=$("#default-search").value.trim().toLowerCase();
+    showVocab();
+  });
+
+  /* ===== Common UI helpers ===== */
+  function aChip(txt,type){const el=$("#aChip");el.className="chip "+(type==="ok"?"chip-ok":type==="bad"?"chip-bad":"chip-muted");el.textContent=txt}
+  function bChip(txt,type){const el=$("#bChip");el.className="chip "+(type==="ok"?"chip-ok":type==="bad"?"chip-bad":"chip-muted");el.textContent=txt}
+  function hideAll(){["#quizA","#quizB","#practiceArea","#vocabArea"].forEach(s=>{$(s).style.display="none"})}
+  function setTab(id){document.querySelectorAll(".bnav-btn").forEach(b=>b.classList.remove("active"));$("#"+id).classList.add("active")}
+  function refreshCurrent(){
+    if($("#quizA").style.display!=="none"){initQuizA();return}
+    if($("#quizB").style.display!=="none"){initQuizB();return}
+    if($("#practiceArea").style.display!=="none"){initPractice();return}
+    if($("#vocabArea").style.display!=="none"){initVocab();return}
+  }
+
+  /* ===== Flashcards ===== */
+  let pPool=[],pIdx=0,pFlipped=false;
+  function initPractice(){
+    hideAll();
+    $("#quizBar").style.display="none";
+    $("#practiceArea").style.display="block";
+    pPool=coverage().map(x=>({...x}));
+    pIdx=0;pFlipped=false;
+    $("#pTotal").textContent=pPool.length;
+    drawCard(true);
+  }
+  function drawCard(first=false){
+    const it=pPool[pIdx];
+    if(!it){
+      $("#pKo").textContent="Done";
+      $("#pPron").textContent="";
+      $("#pId").textContent="";
+      return;
+    }
+    $("#pNow").textContent=pIdx+1;
+    $("#pId").textContent=`#${it.id}`;
+    if(pFlipped){
+      $("#pKo").textContent=it.en;
+      $("#pPron").textContent="";
+    }else{
+      $("#pKo").textContent=it.ko;
+      $("#pPron").textContent=normRR(it.ko);
+      if(!first) speak(it.ko);
+    }
+  }
+  $("#pFlip").addEventListener("click",()=>{pFlipped=!pFlipped;drawCard()});
+  $("#pNext").addEventListener("click",()=>{if(pIdx<pPool.length-1){pIdx++;pFlipped=false;drawCard()}});
+  $("#pPrev").addEventListener("click",()=>{if(pIdx>0){pIdx--;pFlipped=false;drawCard()}});
+  $("#pShuffle").addEventListener("click",()=>{pPool=shuffle(pPool);pIdx=0;pFlipped=false;drawCard()});
+  $("#pSpeak").addEventListener("click",()=>{const it=pPool[pIdx];if(it)speak(it.ko)});
+
+  /* ===== Quiz A ===== */
+  let aPool=[],aIdx=0,aScore=0,aStreak=0;
+  function initQuizA(){
+    hideAll();
+    $("#quizBar").style.display="block";
+    $("#quizA").style.display="block";
+    $("#aIO").style.display="block";
+    $("#aActions").style.display="flex";
+    $("#aRetryWrap").style.display="none";
+    aPool=shuffle(coverage().map(x=>({...x})));
+    aIdx=0;aScore=0;aStreak=0;
+    $("#aTotal").textContent=aPool.length;
+    $("#aScore").textContent=aScore;
+    $("#aStreak").textContent=aStreak;
+    nextA(true);
+  }
+  function nextA(first=false){
+    const it=aPool[aIdx];
+    if(!it){endA();return}
+    $("#aNow").textContent=aIdx+1;
+    $("#aKo").textContent=it.ko;
+    $("#aId").textContent=`#${it.id}`;
+    $("#aAnswer").value="";
+    aChip("Listening","muted");
+    if(!first) speak(it.ko);
+  }
+  function endA(){
+    const total=aPool.length;
+    $("#aKo").textContent="Done";
+    $("#aId").textContent="";
+    aChip(`Score ${aScore}/${total}`,"muted");
+    $("#aIO").style.display="none";
+    $("#aActions").style.display="none";
+    $("#aRetryWrap").style.display="flex";
+  }
+  function checkA(){
+    const it=aPool[aIdx];
+    const ans=$("#aAnswer").value;
+    if(!ans){aChip("Type an answer","bad");return}
+    if(normEn(ans)===normEn(it.en)){
+      aScore++;aStreak++;
+      $("#aScore").textContent=aScore;
+      $("#aStreak").textContent=aStreak;
+      aChip(`✓ ${it.en}`,"ok");
+      aIdx++;
+      setTimeout(()=>nextA(),450);
+    }else{
+      aStreak=0;
+      $("#aStreak").textContent=aStreak;
+      aChip("✗ Try again or Reveal","bad");
+    }
+  }
+  $("#aCheck").addEventListener("click",checkA);
+  $("#aAnswer").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();checkA()}});
+  $("#aReveal").addEventListener("click",()=>{const it=aPool[aIdx];if(it)aChip(`Answer: ${it.en}`,"muted")});
+  $("#aSkip").addEventListener("click",()=>{
+    if(!aPool.length)return;
+    const it=aPool[aIdx];
+    aPool.push(it);
+    aPool.splice(aIdx,1);
+    if(aIdx>=aPool.length)aIdx=aPool.length-1;
+    nextA();
+  });
+  $("#aSpeak").addEventListener("click",()=>{const it=aPool[aIdx];if(it)speak(it.ko)});
+  $("#aRetry").addEventListener("click",initQuizA);
+
+  /* ===== Quiz B ===== */
+  let bPool=[],bIdx=0,bScore=0,bStreak=0,enToKo={},usedKo={};
+  function buildGroups(){
+    enToKo={};usedKo={};
+    for(const it of bPool){
+      const k=normEn(it.en);
+      (enToKo[k]??=[]).push(it.ko);
+    }
+    Object.keys(enToKo).forEach(k=>usedKo[k]=new Set());
+  }
+  function initQuizB(){
+    hideAll();
+    $("#quizBar").style.display="block";
+    $("#quizB").style.display="block";
+    $("#bIO").style.display="block";
+    $("#bActions").style.display="flex";
+    $("#bRetryWrap").style.display="none";
+    bPool=shuffle(coverage().map(x=>({...x})));
+    bIdx=0;bScore=0;bStreak=0;
+    buildGroups();
+    $("#bTotal").textContent=bPool.length;
+    $("#bScore").textContent=bScore;
+    $("#bStreak").textContent=bStreak;
+    nextB(true);
+  }
+  function nextB(first=false){
+    const it=bPool[bIdx];
+    if(!it){endB();return}
+    $("#bNow").textContent=bIdx+1;
+    $("#bEn").textContent=it.en;
+    $("#bId").textContent=`#${it.id}`;
+    $("#bAnswer").value="";
+    const key=normEn(it.en);
+    const left=(enToKo[key]||[]).filter(k=>!usedKo[key].has(normKo(k)));
+    bChip(`Remaining: ${left.length}`,"muted");
+  }
+  function endB(){
+    const total=bPool.length;
+    $("#bEn").textContent="Done";
+    $("#bId").textContent="";
+    bChip(`Score ${bScore}/${total}`,"muted");
+    $("#bIO").style.display="none";
+    $("#bActions").style.display="none";
+    $("#bRetryWrap").style.display="flex";
+  }
+  function checkB(){
+    const it=bPool[bIdx];
+    const v=$("#bAnswer").value.trim();
+    if(!v){bChip("Type Hangul or RR","bad");return}
+    const key=normEn(it.en);
+    const opts=enToKo[key]||[it.ko];
+    let ok=null;
+    if(/[\uac00-\ud7a3]/.test(v)){
+      const u=normKo(v);
+      ok=opts.find(k=>normKo(k)===u);
+    }else{
+      const u=normRR(v);
+      ok=opts.find(k=>normRR(k)===u);
+    }
+    if(!ok){
+      bStreak=0;
+      $("#bStreak").textContent=bStreak;
+      bChip("✗ Not a valid option","bad");
+      return;
+    }
+    const kN=normKo(ok);
+    if(usedKo[key].has(kN)){
+      bStreak=0;
+      $("#bStreak").textContent=bStreak;
+      bChip("Already used","bad");
+      return;
+    }
+    usedKo[key].add(kN);
+    bScore++;bStreak++;
+    $("#bScore").textContent=bScore;
+    $("#bStreak").textContent=bStreak;
+    bChip(`✓ ${ok}`,"ok");
+    bIdx++;
+    setTimeout(()=>nextB(),450);
+  }
+  $("#bCheck").addEventListener("click",checkB);
+  $("#bAnswer").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();checkB()}});
+  $("#bReveal").addEventListener("click",()=>{
+    const it=bPool[bIdx];
+    if(!it)return;
+    const key=normEn(it.en);
+    const left=(enToKo[key]||[]).filter(k=>!usedKo[key].has(normKo(k)));
+    bChip(left.length?`Remaining: ${left.join(" / ")}`:"All used","muted");
+  });
+  $("#bSkip").addEventListener("click",()=>{
+    if(!bPool.length)return;
+    const it=bPool[bIdx];
+    bPool.push(it);
+    bPool.splice(bIdx,1);
+    if(bIdx>=bPool.length)bIdx=bPool.length-1;
+    nextB();
+  });
+  $("#bRetry").addEventListener("click",initQuizB);
+
+  /* ===== Vocab ===== */
+  function initVocab(){
+    hideAll();
+    $("#quizBar").style.display="none";
+    $("#vocabArea").style.display="block";
+    const list=coverage();
+    $("#vCount").textContent=list.length;
+    const q=(searchQuery||"").toLowerCase();
+    const filtered=q
+      ? list.filter(it=>{
+          const rr=romanizeHangulRR(it.ko).toLowerCase();
+          return it.ko.includes(q) || it.en.toLowerCase().includes(q) || rr.includes(q);
+        })
+      : list;
+    const grid=$("#vocabGrid");
+    grid.innerHTML="";
+    filtered.forEach(it=>{
+      const rr=romanizeHangulRR(it.ko);
+      const card=document.createElement("button");
+      card.type="button";
+      card.className="voc-card text-left";
+      card.innerHTML=`
+        <div class="voc-ko">${it.ko}</div>
+        <div class="voc-rr">${rr}</div>
+        <div class="voc-en">${it.en}</div>
+      `;
+      card.addEventListener("click",()=>speak(it.ko));
+      grid.appendChild(card);
+    });
+  }
+
+  /* ===== Bottom nav ===== */
+  function showFlash(){initPractice();setTab("navFlash")}
+  function showQuiz(){
+    $("#quizBar").style.display="block";
+    const sel=$("#quizMode").value || "A";
+    sel==="B" ? initQuizB() : initQuizA();
+    setTab("navQuiz");
+  }
+  function showVocab(){initVocab();setTab("navVocab")}
+
+  $("#navFlash").addEventListener("click",showFlash);
+  $("#navQuiz").addEventListener("click",showQuiz);
+  $("#navVocab").addEventListener("click",showVocab);
+
+  $("#quizMode").addEventListener("change",()=>{
+    $("#quizMode").value==="B" ? initQuizB() : initQuizA();
+  });
+
+  // Start on Flashcards
+  showFlash();
+
+  // PWA: register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(console.error);
+  }
+
+  // Optional: cache vocab data snapshot in localStorage (tiny)
+  if (!localStorage.getItem('kt_items')) {
+    localStorage.setItem('kt_items', JSON.stringify(ITEMS));
+  }
+});
+</script>
+</body>
+</html>
