@@ -753,7 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!("speechSynthesis" in window)) return;
     const u=new SpeechSynthesisUtterance(text);
     u.lang="ko-KR";
-    u.rate=.95;
+    u.rate=.97;
     speechSynthesis.cancel();
     speechSynthesis.speak(u);
   }
