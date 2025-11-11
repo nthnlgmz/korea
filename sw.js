@@ -5,9 +5,7 @@ const CORE_ASSETS = [
   './index.html',
   './manifest.webmanifest',
   './sw.js',
-  // If you host icons locally
-  './icons/icon-192.png',
-  './icons/icon-512.png',
+  './logo.ico',       
   // External assets you want cached after first load:
   'https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap',
