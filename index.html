@@ -179,6 +179,18 @@
       </button>
     </div>
     <div class="drawer-body">
+      
+      <div>
+  <label for="batchSelect" class="block mb-1 text-sm text-slate-600">
+    Vocab batch
+  </label>
+  <select id="batchSelect"
+          class="border border-gray-300 rounded-lg p-2 text-sm w-full rounded-[12px]">
+    <option value="batch1">1st Batch of Vocabs</option>
+    <option value="batch2">2nd Batch of Vocabs</option>
+  </select>
+</div>
+
       <div class="fg">
         <input id="startIdx" type="number" min="1" value="1" placeholder=" "/>
         <label for="startIdx">Coverage start*</label>
@@ -549,6 +561,110 @@ document.addEventListener('DOMContentLoaded', () => {
     {id:100,ko:"신호등",en:"traffic lights"},
     {id:101,ko:"길거리",en:"street"}
   ];
+  
+  const NEW_ITEMS = [
+  {id:1, ko:"걷다", en:"to walk"},
+  {id:2, ko:"시작하다", en:"to start"},
+  {id:3, ko:"받다", en:"to receive"},
+  {id:4, ko:"맛없다", en:"tasteless"},
+  {id:5, ko:"맛있다", en:"delicious"},
+  {id:6, ko:"어렵다", en:"to be difficult"},
+  {id:7, ko:"바쁘다", en:"to be busy"},
+  {id:8, ko:"쉽다", en:"to be easy"},
+  {id:9, ko:"아프다", en:"hurt, painful"},
+  {id:10, ko:"오다", en:"to come"},
+  {id:11, ko:"가다", en:"to go"},
+  {id:12, ko:"빠르다", en:"fast"},
+  {id:13, ko:"재미있다", en:"interesting"},
+  {id:14, ko:"느리다", en:"slow"},
+  {id:15, ko:"조용하다", en:"quiet"},
+  {id:16, ko:"읽다", en:"read"},
+  {id:17, ko:"일어나다", en:"get up"},
+  {id:18, ko:"앉다", en:"sit"},
+  {id:19, ko:"청소하다", en:"to clean"},
+  {id:20, ko:"운동하다", en:"to work out / exercise"},
+  {id:21, ko:"기다리다", en:"wait"},
+  {id:22, ko:"감사하다", en:"thank"},
+  {id:23, ko:"가깝다", en:"near"},
+  {id:24, ko:"비싸다", en:"expensive"},
+  {id:25, ko:"많다", en:"many"},
+  {id:26, ko:"싸다", en:"cheap"},
+  {id:27, ko:"춥다", en:"cold"},
+  {id:28, ko:"요리하다", en:"to cook"},
+  {id:29, ko:"덥다", en:"hot"},
+  {id:30, ko:"보다", en:"watch, see"},
+  {id:31, ko:"없다", en:"not to have/exist"},
+  {id:32, ko:"좋다", en:"good"},
+  {id:33, ko:"있다", en:"to have / exist"},
+  {id:34, ko:"팔다", en:"to sell"},
+  {id:35, ko:"싫어하다", en:"to dislike"},
+  {id:36, ko:"좋아하다", en:"to like"},
+  {id:37, ko:"운전하다", en:"to drive"},
+  {id:38, ko:"가르치다", en:"to stop"},
+  {id:39, ko:"입다", en:"to wear"},
+  {id:40, ko:"배우다", en:"to learn"},
+  {id:41, ko:"공부하다", en:"to study"},
+  {id:42, ko:"듣다", en:"to listen"},
+  {id:43, ko:"쓰다", en:"to write"},
+  {id:44, ko:"주다", en:"to give"},
+  {id:45, ko:"자다", en:"to sleep"},
+  {id:46, ko:"만나다", en:"to meet"},
+  {id:47, ko:"마시다", en:"to drink"},
+  {id:48, ko:"놀다", en:"to play"},
+  {id:49, ko:"닫다", en:"to close"},
+  {id:50, ko:"고르다", en:"choose"},
+  {id:51, ko:"자동판매기", en:"vending machine"},
+  {id:52, ko:"히터", en:"heater"},
+  {id:53, ko:"전화기", en:"telephone"},
+  {id:54, ko:"휴대전화", en:"mobile phone"},
+  {id:55, ko:"다리미", en:"flat iron"},
+  {id:56, ko:"선풍기", en:"electric fan"},
+  {id:57, ko:"청소기", en:"vacuum cleaner"},
+  {id:58, ko:"컴퓨터", en:"computer"},
+  {id:59, ko:"세탁기", en:"washing machine"},
+  {id:60, ko:"냉장고", en:"refrigerator"},
+  {id:61, ko:"가구", en:"furniture"},
+  {id:62, ko:"치약", en:"toothpaste"},
+  {id:63, ko:"옷장", en:"closet"},
+  {id:64, ko:"칫솔", en:"toothbrush"},
+  {id:65, ko:"안경", en:"eyeglasses"},
+  {id:66, ko:"쓰레기통", en:"garbage can"},
+  {id:67, ko:"신문", en:"newspaper"},
+  {id:68, ko:"바지", en:"pants"},
+  {id:69, ko:"모자", en:"hat"},
+  {id:70, ko:"돈", en:"money"},
+  {id:71, ko:"달력", en:"calendar"},
+  {id:72, ko:"복사기", en:"copier"},
+  {id:73, ko:"창문", en:"window"},
+  {id:74, ko:"자동인출기", en:"ATM"},
+  {id:75, ko:"계산기", en:"calculator"},
+  { id:76, ko:"치마", en:"skirt" },
+  {id:77, ko:"지갑", en:"wallet"},
+  {id:78, ko:"가방", en:"bag"},
+  {id:79, ko:"연필", en:"pencil"},
+  {id:80, ko:"공책", en:"notebook"},
+  {id:81, ko:"우산", en:"umbrella"},
+  {id:82, ko:"수건", en:"towel"},
+  {id:83, ko:"시계", en:"clock / watch"},
+  {id:84, ko:"의자", en:"chair"},
+  {id:85, ko:"병", en:"bottle"},
+  {id:86, ko:"침대", en:"bed"},
+  {id:87, ko:"책상", en:"desk"},
+  {id:88, ko:"젓가락", en:"chopsticks"},
+  {id:89, ko:"숟가락", en:"spoon"},
+  {id:90, ko:"가위", en:"scissors"},
+  {id:91, ko:"공장", en:"factory"},
+  {id:92, ko:"집", en:"house"},
+  {id:93, ko:"운전기사", en:"driver"},
+  {id:94, ko:"간호사", en:"nurse"},
+  {id:95, ko:"의사", en:"doctor"},
+  {id:96, ko:"선생님", en:"teacher"},
+  {id:97, ko:"한국", en:"Korea"},
+  {id:98, ko:"생일", en:"birthday"},
+  {id:99, ko:"이름", en:"name"},
+  {id:100, ko:"나이", en:"age"},
+];
+
   const MAX_ID = ITEMS.reduce((m,x)=>Math.max(m,x.id),0);
 
   /* ===== Romanization engine with your rules ===== */
@@ -760,44 +876,118 @@ document.addEventListener('DOMContentLoaded', () => {
     speechSynthesis.speak(u);
   }
 
-  /* ===== Coverage with localStorage ===== */
-  const LS_KEYS={start:"kt_cov_start",end:"kt_cov_end"};
-  const startEl=$("#startIdx"),endEl=$("#endIdx");
-  let start=1,end=17;
+    /* ===== Coverage with localStorage + batches ===== */
+  const batchSel = $("#batchSelect");
 
-  function clampNum(v,lo,hi){
-    v=parseInt(v,10);
-    if(Number.isNaN(v)) return lo;
-    return Math.max(lo,Math.min(hi,v));
-  }
-  function loadCoverageDefaults(){
-    const hasStart=localStorage.getItem(LS_KEYS.start)!==null;
-    const hasEnd=localStorage.getItem(LS_KEYS.end)!==null;
-    const s=hasStart?localStorage.getItem(LS_KEYS.start):"1";
-    const e=hasEnd?localStorage.getItem(LS_KEYS.end):"17";
-    start=clampNum(s,1,9999);
-    end=clampNum(e,1,9999);
-    if(startEl) startEl.value=String(start);
-    if(endEl) endEl.value=String(end);
-    if(!hasStart) localStorage.setItem(LS_KEYS.start,String(start));
-    if(!hasEnd) localStorage.setItem(LS_KEYS.end,String(end));
-  }
-  loadCoverageDefaults();
+  // Batch ranges (defaults for first time use of each batch)
+  const BATCH_RANGES = {
+    batch1: { start: 1,   end: 101 }, // first batch (ITEMS)
+    batch2: { start: 1,   end: 100 }  // second batch (NEW_ITEMS)
+  };
 
+  const LS_BATCH_KEY = "kt_batch"; // which batch was last used
+
+  const startEl = $("#startIdx");
+  const endEl   = $("#endIdx");
+
+  let currentBatch = "batch1";
+  let start = 1;
+  let end   = 17;
+
+  const LS_KEYS = {
+    startKey(batch){ return `kt_cov_${batch}_start`; },
+    endKey(batch){   return `kt_cov_${batch}_end`;   }
+  };
+
+  function getDataset(batch){
+    return batch === "batch2" ? NEW_ITEMS : ITEMS;
+  }
+
+  function clampNum(v, lo, hi){
+    v = parseInt(v, 10);
+    if (Number.isNaN(v)) return lo;
+    return Math.max(lo, Math.min(hi, v));
+  }
+
+  // Load saved coverage for a batch, or default to its full range
+  function loadCoverageForBatch(batch){
+    const ds    = getDataset(batch);
+    const def   = BATCH_RANGES[batch] || {
+      start: 1,
+      end: ds.reduce((m,x)=>Math.max(m,x.id),0) || 1
+    };
+    const kS    = LS_KEYS.startKey(batch);
+    const kE    = LS_KEYS.endKey(batch);
+    const sRaw  = localStorage.getItem(kS);
+    const eRaw  = localStorage.getItem(kE);
+
+    const s = clampNum(sRaw ?? def.start, 1, 9999);
+    const e = clampNum(eRaw ?? def.end,   1, 9999);
+
+    // Ensure something is stored for that batch
+    localStorage.setItem(kS, String(s));
+    localStorage.setItem(kE, String(e));
+
+    return { start: s, end: e };
+  }
+
+  function saveCoverageForBatch(batch, s, e){
+    localStorage.setItem(LS_KEYS.startKey(batch), String(s));
+    localStorage.setItem(LS_KEYS.endKey(batch),   String(e));
+  }
+
+  function initCoverage(){
+    // Load last used batch (default batch1)
+    const savedBatch = localStorage.getItem(LS_BATCH_KEY);
+    currentBatch = (savedBatch === "batch2") ? "batch2" : "batch1";
+
+    if (batchSel) batchSel.value = currentBatch;
+
+    const cfg = loadCoverageForBatch(currentBatch);
+    start = cfg.start;
+    end   = cfg.end;
+
+    if (startEl) startEl.value = String(start);
+    if (endEl)   endEl.value   = String(end);
+  }
+
+  initCoverage();
+
+  // When user changes batch:
+  if (batchSel) {
+    batchSel.addEventListener("change", () => {
+      currentBatch = (batchSel.value === "batch2") ? "batch2" : "batch1";
+      localStorage.setItem(LS_BATCH_KEY, currentBatch);
+
+      const cfg = loadCoverageForBatch(currentBatch);
+      start = cfg.start;
+      end   = cfg.end;
+
+      if (startEl) startEl.value = String(start);
+      if (endEl)   endEl.value   = String(end);
+
+      refreshCurrent(); // redraw Flash/Quiz/Vocab for this batch
+    });
+  }
+
+  // Coverage now depends on BOTH: current batch + start/end for that batch
   function coverage(){
-    const lo=Math.max(1,Math.min(start,end));
-    const hiCap=MAX_ID||9999;
-    const hi=Math.max(1,Math.min(hiCap,Math.max(start,end)));
-    return ITEMS.filter(x=>x.id>=lo && x.id<=hi);
+    const ds   = getDataset(currentBatch);
+    const lo   = Math.max(1, Math.min(start, end));
+    const hiId = ds.reduce((m,x)=>Math.max(m,x.id),0) || 0;
+    const hi   = Math.max(1, Math.min(hiId, Math.max(start, end)));
+    return ds.filter(x => x.id >= lo && x.id <= hi);
   }
 
-  [startEl,endEl].forEach(el=>el && el.addEventListener("input",()=>{
-    start=clampNum(startEl.value||"1",1,9999);
-    end=clampNum(endEl.value||"17",1,9999);
-    localStorage.setItem(LS_KEYS.start,String(start));
-    localStorage.setItem(LS_KEYS.end,String(end));
+  // When user edits start/end: save for *current batch only*
+  [startEl, endEl].forEach(el => el && el.addEventListener("input", () => {
+    start = clampNum(startEl.value || "1",  1, 9999);
+    end   = clampNum(endEl.value   || "17", 1, 9999);
+    saveCoverageForBatch(currentBatch, start, end);
     refreshCurrent();
   }));
+
+
 
   /* ===== Drawer ===== */
   const drawer=$("#drawer"),btnBurger=$("#btnBurger"),btnDrawerClose=$("#btnDrawerClose"),drawerBackdrop=$("#drawerBackdrop");
