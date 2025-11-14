@@ -1,25 +1,34 @@
-const CACHE_NAME = 'korean-trainer-v1';
+// CHANGE THIS every deployment
+const CACHE_VERSION = "v4";
 
+// Final cache name
+const CACHE_NAME = `kotrainer-${CACHE_VERSION}`;
+
+// Assets to precache
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './sw.js',
-  './logo.ico',       
-  // External assets you want cached after first load:
+  './logo.ico',
+
+  // External assets (cached after 1st load)
   'https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap',
   'https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600;800;900&display=swap',
   'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined',
 ];
 
+// INSTALL → save latest cache
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(CORE_ASSETS))
   );
+  self.skipWaiting();
 });
 
+// ACTIVATE → delete ALL old caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -30,12 +39,14 @@ self.addEventListener('activate', event => {
       )
     )
   );
+  self.clients.claim();
 });
 
+// FETCH → cache-first with network fallback
 self.addEventListener('fetch', event => {
   const req = event.request;
 
-  // Only handle GET
+  // Ignore POST, PUT, etc.
   if (req.method !== 'GET') return;
 
   event.respondWith(
@@ -44,15 +55,14 @@ self.addEventListener('fetch', event => {
 
       return fetch(req)
         .then(res => {
-          // Clone and store in cache for future offline use
-          const resClone = res.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => cache.put(req, resClone))
-            .catch(() => {});
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(req, clone);
+          });
           return res;
         })
         .catch(() => {
-          // Fallback: if offline and no cache
+          // If offline and missing
           if (req.destination === 'document') {
             return caches.match('./index.html');
           }
