@@ -1290,5 +1290,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    alert("A new version is available. Restarting app...");
+    window.location.reload();
+  });
+
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    reg.onupdatefound = () => {
+      const newSW = reg.installing;
+      newSW.onstatechange = () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          // Request update
+          newSW.postMessage({ action: "skipWaiting" });
+        }
+      };
+    };
+  });
+}
+</script>
+
 </body>
 </html>
