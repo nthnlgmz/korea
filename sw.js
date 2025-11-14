@@ -27,6 +27,11 @@ self.addEventListener('install', event => {
   );
   self.skipWaiting();
 });
+self.addEventListener('message', event => {
+  if (event.data?.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
 
 // ACTIVATE → delete ALL old caches
 self.addEventListener('activate', event => {
