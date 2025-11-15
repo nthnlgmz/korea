@@ -1278,7 +1278,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start on Flashcards
   showFlash();
-  </script>
+  
+  // PWA: register service worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(console.error);
+  }
+
+  // Optional: cache vocab data snapshot in localStorage (tiny)
+  if (!localStorage.getItem('kt_items')) {
+    localStorage.setItem('kt_items', JSON.stringify(ITEMS));
+  }
+});
+</script>
   <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -1317,7 +1328,5 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-
-
 </body>
 </html>
