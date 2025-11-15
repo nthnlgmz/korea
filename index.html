@@ -1290,43 +1290,137 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
-  <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    alert("A new version is available. Restarting app...");
-    window.location.reload();
-  });
 
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    reg.onupdatefound = () => {
-      const newSW = reg.installing;
-      newSW.onstatechange = () => {
-        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-          // Request update
-          newSW.postMessage({ action: "skipWaiting" });
-        }
-      };
-    };
-  });
-}
-</script>
+
+  <!-- Update modal (Flowbite) -->
+<div id="swUpdateModal" tabindex="-1" aria-hidden="true"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="relative w-full max-w-xl">
+    <div class="bg-white rounded-2xl border shadow-lg overflow-hidden">
+      <div class="p-4 border-b flex items-start justify-between gap-3">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Update available</h3>
+          <p class="text-sm text-slate-600 mt-1">A new version is ready. Here’s what’s new:</p>
+        </div>
+        <button id="swModalClose" class="text-slate-400 hover:text-slate-600" aria-label="Close">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-4 max-h-64 overflow-auto space-y-3">
+        <!-- Put your changelog here. We'll fill programmatically if you want -->
+        <div id="swChangelog" class="text-sm text-slate-700">
+          • Minor fixes and vocab updates.<br>
+          • New batch items added.
+        </div>
+      </div>
+
+      <div class="p-4 border-t flex items-center justify-end gap-3">
+        <button id="swRemindLater" class="secondary px-4 py-2 rounded-md">Remind me later</button>
+        <button id="swUpdateBtn" class="primary px-4 py-2 rounded-md btn-ico">
+          <span id="swUpdateSpinner" class="material-symbols-outlined hidden animate-spin">autorenew</span>
+          <span id="swUpdateText">Update</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").then(reg => {
-    reg.addEventListener("updatefound", () => {
-      const newSW = reg.installing;
-      newSW.addEventListener("statechange", () => {
-        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-          newSW.postMessage({ action: "skipWaiting" });
-        }
+(function(){
+  const modalEl = document.getElementById('swUpdateModal');
+  const closeBtn = document.getElementById('swModalClose');
+  const remindBtn = document.getElementById('swRemindLater');
+  const updateBtn = document.getElementById('swUpdateBtn');
+  const changelogEl = document.getElementById('swChangelog');
+  const spinner = document.getElementById('swUpdateSpinner');
+  const updateText = document.getElementById('swUpdateText');
+
+  // Helper to show/hide modal (Flowbite markup is used but we manage visibility manually)
+  function showModal(){
+    modalEl.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function hideModal(){
+    modalEl.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', hideModal);
+  remindBtn.addEventListener('click', hideModal);
+
+  // If you want to set detailed changelog dynamically, set innerHTML of changelogEl
+  // e.g. changelogEl.innerHTML = '<ul><li>Added 50 words</li><li>Fixed romanization</li></ul>';
+
+  // Service Worker registration + update handling
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      // When a new SW is installing (update found)
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        if (!newSW) return;
+        newSW.addEventListener('statechange', () => {
+          // 'installed' means the new SW is ready. If there's already a controller, this is an update.
+          if (newSW.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              // show modal to user
+              // Optionally populate changelogEl from server or from SW (left static if not provided)
+              showModal();
+              // store reference so update button can act on it
+              modalEl._waitingWorker = reg.waiting || newSW;
+            } else {
+              // first install — no need to prompt for update
+              // You could optionally show "App ready for offline use" toast here
+            }
+          }
+        });
       });
+
+      // If there's an already waiting SW (e.g., user closed page while update installed)
+      if (reg.waiting) {
+        // immediate prompt
+        showModal();
+        modalEl._waitingWorker = reg.waiting;
+      }
+    }).catch(console.error);
+
+    // When the new SW takes over, reload so the user gets the new content
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // Avoid multiple reloads
+      if (window._kotrainer_reloadPending) return;
+      window._kotrainer_reloadPending = true;
+      // short delay for UX (allow spinner to show)
+      setTimeout(() => location.reload(true), 600);
     });
+  }
+
+  // Update button: send skipWaiting to SW then wait for controllerchange reload
+  updateBtn.addEventListener('click', async () => {
+    const waiting = modalEl._waitingWorker;
+    if (!waiting) {
+      // fallback: try to message any SW
+      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
+      return;
+    }
+    // show spinner
+    spinner.classList.remove('hidden');
+    updateText.textContent = 'Updating...';
+    // Send message to the waiting SW
+    try {
+      // Some browsers require postMessage to the service worker registration waiting worker
+      waiting.postMessage({ action: 'skipWaiting' });
+      // Also try to message global controller as a backup
+      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
+    } catch(e){
+      console.error(e);
+    }
+    // close modal visually (reload will happen on controllerchange)
+    // keep spinner visible if user cancels or reload takes time
+    // optionally hide the modal but keep spinner on the page — here we hide it
+    hideModal();
   });
 
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    window.location.reload();
-  });
-}
+})();
 </script>
+
 </body>
 </html>
