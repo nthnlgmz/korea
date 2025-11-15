@@ -1,5 +1,5 @@
 // CHANGE THIS every deployment
-const CACHE_VERSION = "v5.2.3.2.2.3";
+const CACHE_VERSION = "v5.2.3.2.2.4";
 
 // Final cache name
 const CACHE_NAME = `kotrainer-${CACHE_VERSION}`;
@@ -25,8 +25,9 @@ self.addEventListener('install', event => {
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(CORE_ASSETS))
   );
-  self.skipWaiting();
+  // NO auto skipWaiting here
 });
+
 self.addEventListener('message', event => {
   if (event.data?.action === 'skipWaiting') {
     self.skipWaiting();
