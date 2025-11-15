@@ -1,5 +1,5 @@
 // CHANGE THIS every deployment
-const CACHE_VERSION = "v5.2.3.2.8.4";
+const CACHE_VERSION = "v5.2.3.2.8.5";
 
 // Final cache name
 const CACHE_NAME = `kotrainer-${CACHE_VERSION}`;
@@ -54,6 +54,11 @@ self.addEventListener('fetch', event => {
   // Ignore POST, PUT, etc.
   if (req.method !== 'GET') return;
 
+  if (req.url.endsWith('/updates.json')) {
+    // always fetch fresh
+    event.respondWith(fetch(req));
+    return;
+  }
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
