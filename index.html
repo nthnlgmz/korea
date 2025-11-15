@@ -1280,94 +1280,44 @@ document.addEventListener('DOMContentLoaded', () => {
   showFlash();
                           </script>
   <script>
-/* Service worker registration + update modal flow
-   Replace the three sw registration blocks with this single block.
-   Requires the Flowbite-style modal HTML (ids: updateModal, updateNowBtn,
-   updateLaterBtn, updateCloseIcon) to be present on the page. */
-(function(){
-  if (!('serviceWorker' in navigator)) return;
-
-  let newWorker = null;
-
-  function openUpdateModal(){
-    const modal = document.getElementById('updateModal');
-    if (!modal) return;
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
-  function closeUpdateModal(){
-    const modal = document.getElementById('updateModal');
-    if (!modal) return;
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-
-  // register once
-  navigator.serviceWorker.register('/sw.js')
-    .then(reg => {
-      // detect new SW being installed
-      reg.addEventListener('updatefound', () => {
-        newWorker = reg.installing;
-        if (!newWorker) return;
-
-        newWorker.addEventListener('statechange', () => {
-          // when new SW is installed and there is an active controller,
-          // show the update modal instead of forcing skipWaiting immediately
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            openUpdateModal();
-          }
-        });
-      });
-    })
-    .catch(console.error);
-
-  // When a new SW activates and becomes controller, update cached snapshot then reload
-  let reloading = false;
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
-    reloading = true;
-
-    try {
-      // replace cached vocab snapshot so the app uses fresh ITEMS after update
-      localStorage.setItem('kt_items', JSON.stringify(window.ITEMS || []));
-    } catch (e) {
-      // ignore storage errors
-    }
-
-    // reload to pick up the new service worker / cache
+    alert("A new version is available. Restarting app...");
     window.location.reload();
   });
 
-  // modal buttons wiring
-  const btnUpdateNow   = document.getElementById('updateNowBtn');
-  const btnUpdateLater = document.getElementById('updateLaterBtn');
-  const btnUpdateClose = document.getElementById('updateCloseIcon');
-
-  if (btnUpdateNow) {
-    btnUpdateNow.addEventListener('click', () => {
-      // ask SW to skipWaiting and activate
-      if (newWorker) newWorker.postMessage({ action: 'skipWaiting' });
-      closeUpdateModal();
-    });
-  }
-  if (btnUpdateLater) {
-    btnUpdateLater.addEventListener('click', () => {
-      closeUpdateModal();
-      // user stays on old version until they refresh or next install
-    });
-  }
-  if (btnUpdateClose) {
-    btnUpdateClose.addEventListener('click', closeUpdateModal);
-  }
-
-  // Ensure localStorage snapshot exists on initial load (will be replaced on update)
-  try {
-    if (!localStorage.getItem('kt_items')) {
-      localStorage.setItem('kt_items', JSON.stringify(window.ITEMS || []));
-    }
-  } catch (e) {}
-})();
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    reg.onupdatefound = () => {
+      const newSW = reg.installing;
+      newSW.onstatechange = () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          // Request update
+          newSW.postMessage({ action: "skipWaiting" });
+        }
+      };
+    };
+  });
+}
 </script>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").then(reg => {
+    reg.addEventListener("updatefound", () => {
+      const newSW = reg.installing;
+      newSW.addEventListener("statechange", () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          newSW.postMessage({ action: "skipWaiting" });
+        }
+      });
+    });
+  });
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
+}
+</script>
+
 
 
 
