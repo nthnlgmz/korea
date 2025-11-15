@@ -9,7 +9,6 @@ const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './sw.js',
   './logo.ico',
 
   // External assets (cached after 1st load)
