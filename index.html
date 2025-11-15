@@ -1279,55 +1279,152 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start on Flashcards
   showFlash();
 
-  // PWA: register service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(console.error);
-  }
-
-  // Optional: cache vocab data snapshot in localStorage (tiny)
-  if (!localStorage.getItem('kt_items')) {
-    localStorage.setItem('kt_items', JSON.stringify(ITEMS));
-  }
-});
-</script>
   <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    alert("A new version is available. Restarting app...");
-    window.location.reload();
-  });
+/* Service worker registration + update modal flow
+   Replace the three sw registration blocks with this single block.
+   Requires the Flowbite-style modal HTML (ids: updateModal, updateNowBtn,
+   updateLaterBtn, updateCloseIcon) to be present on the page. */
+(function(){
+  if (!('serviceWorker' in navigator)) return;
 
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    reg.onupdatefound = () => {
-      const newSW = reg.installing;
-      newSW.onstatechange = () => {
-        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-          // Request update
-          newSW.postMessage({ action: "skipWaiting" });
-        }
-      };
-    };
-  });
-}
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").then(reg => {
-    reg.addEventListener("updatefound", () => {
-      const newSW = reg.installing;
-      newSW.addEventListener("statechange", () => {
-        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-          newSW.postMessage({ action: "skipWaiting" });
-        }
+  let newWorker = null;
+
+  function openUpdateModal(){
+    const modal = document.getElementById('updateModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+  function closeUpdateModal(){
+    const modal = document.getElementById('updateModal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  // register once
+  navigator.serviceWorker.register('/sw.js')
+    .then(reg => {
+      // detect new SW being installed
+      reg.addEventListener('updatefound', () => {
+        newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener('statechange', () => {
+          // when new SW is installed and there is an active controller,
+          // show the update modal instead of forcing skipWaiting immediately
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            openUpdateModal();
+          }
+        });
       });
-    });
-  });
+    })
+    .catch(console.error);
 
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
+  // When a new SW activates and becomes controller, update cached snapshot then reload
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading) return;
+    reloading = true;
+
+    try {
+      // replace cached vocab snapshot so the app uses fresh ITEMS after update
+      localStorage.setItem('kt_items', JSON.stringify(window.ITEMS || []));
+    } catch (e) {
+      // ignore storage errors
+    }
+
+    // reload to pick up the new service worker / cache
     window.location.reload();
   });
-}
+
+  // modal buttons wiring
+  const btnUpdateNow   = document.getElementById('updateNowBtn');
+  const btnUpdateLater = document.getElementById('updateLaterBtn');
+  const btnUpdateClose = document.getElementById('updateCloseIcon');
+
+  if (btnUpdateNow) {
+    btnUpdateNow.addEventListener('click', () => {
+      // ask SW to skipWaiting and activate
+      if (newWorker) newWorker.postMessage({ action: 'skipWaiting' });
+      closeUpdateModal();
+    });
+  }
+  if (btnUpdateLater) {
+    btnUpdateLater.addEventListener('click', () => {
+      closeUpdateModal();
+      // user stays on old version until they refresh or next install
+    });
+  }
+  if (btnUpdateClose) {
+    btnUpdateClose.addEventListener('click', closeUpdateModal);
+  }
+
+  // Ensure localStorage snapshot exists on initial load (will be replaced on update)
+  try {
+    if (!localStorage.getItem('kt_items')) {
+      localStorage.setItem('kt_items', JSON.stringify(window.ITEMS || []));
+    }
+  } catch (e) {}
+})();
 </script>
+
+
+
+  <!-- Update available modal (Flowbite-style) -->
+<div id="updateModal"
+     tabindex="-1"
+     aria-hidden="true"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60">
+  <div class="relative w-full max-w-md p-4">
+    <div class="relative bg-white rounded-2xl shadow-lg border border-gray-200">
+      <!-- Header -->
+      <div class="flex items-start justify-between p-4 pb-2">
+        <div>
+          <h3 class="text-base font-semibold text-gray-900">
+            New version available
+          </h3>
+          <p class="mt-1 text-xs text-gray-500">
+            A fresher version of <span class="font-semibold">Learn Korean Vocabs</span> is ready.
+          </p>
+        </div>
+        <button type="button"
+                id="updateCloseIcon"
+                class="inline-flex items-center justify-center rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="px-4 pb-3">
+        <div class="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5">
+          <p class="text-xs font-semibold text-amber-900">
+            What's new
+          </p>
+          <ul class="mt-1.5 list-disc pl-4 text-xs text-amber-900 space-y-0.5">
+            <li>Added 2nd batch of vocab items (verbs, objects, etc.).</li>
+            <li>Separate coverage per batch (saves last range per batch).</li>
+            <li>Bug fixes and performance tweaks.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-end gap-2 px-4 pb-4 pt-1">
+        <button type="button"
+                id="updateLaterBtn"
+                class="inline-flex items-center rounded-full border border-gray-200 bg-gray-50 px-3.5 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-100">
+          Later
+        </button>
+        <button type="button"
+                id="updateNowBtn"
+                class="inline-flex items-center rounded-full bg-gradient-to-r from-orange-400 to-orange-500 px-4 py-1.5 text-xs font-bold text-white shadow-sm hover:from-orange-500 hover:to-orange-600">
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
