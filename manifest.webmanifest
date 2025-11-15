@@ -1,7 +1,6 @@
 {
   "name": "Korean Trainer",
   "short_name": "KoreanTrainer",
-  "versiion": "2",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f6f7fb",
