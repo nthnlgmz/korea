@@ -1335,7 +1335,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const spinner = document.getElementById('swUpdateSpinner');
   const updateText = document.getElementById('swUpdateText');
 
-  // Helper to show/hide modal (Flowbite markup is used but we manage visibility manually)
   function showModal(){
     modalEl.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -1348,79 +1347,81 @@ document.addEventListener('DOMContentLoaded', () => {
   closeBtn.addEventListener('click', hideModal);
   remindBtn.addEventListener('click', hideModal);
 
-  // If you want to set detailed changelog dynamically, set innerHTML of changelogEl
-  // e.g. changelogEl.innerHTML = '<ul><li>Added 50 words</li><li>Fixed romanization</li></ul>';
+  // Keep a reference to the waiting worker (if any)
+  function setWaitingWorker(registration, worker) {
+    modalEl._waitingWorker = worker || registration.waiting || null;
+  }
 
-  // Service Worker registration + update handling
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then(reg => {
-      // When a new SW is installing (update found)
+
+      // If there's already a waiting worker (previous update installed) -> show modal
+      if (reg.waiting) {
+        setWaitingWorker(reg, reg.waiting);
+        // populate changelog if you fetch it; leave default otherwise
+        showModal();
+      }
+
+      // Listen for updatefound: a new worker is installing
       reg.addEventListener('updatefound', () => {
         const newSW = reg.installing;
         if (!newSW) return;
+        // when the state becomes 'installed' and there's a controller, it's an update
         newSW.addEventListener('statechange', () => {
-          // 'installed' means the new SW is ready. If there's already a controller, this is an update.
           if (newSW.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // show modal to user
-              // Optionally populate changelogEl from server or from SW (left static if not provided)
+              // NEW UPDATE READY — show modal and keep waiting worker reference
+              setWaitingWorker(reg, reg.waiting || newSW);
               showModal();
-              // store reference so update button can act on it
-              modalEl._waitingWorker = reg.waiting || newSW;
             } else {
-              // first install — no need to prompt for update
-              // You could optionally show "App ready for offline use" toast here
+              // first-time install — ignore (no update prompt)
             }
           }
         });
       });
 
-      // If there's an already waiting SW (e.g., user closed page while update installed)
-      if (reg.waiting) {
-        // immediate prompt
-        showModal();
-        modalEl._waitingWorker = reg.waiting;
-      }
+      // Optional: re-check periodically (in case registration updated in background)
+      // Not required; reg.waiting check above covers most cases.
+
     }).catch(console.error);
 
-    // When the new SW takes over, reload so the user gets the new content
+    // When controller changes (new SW took control), reload to apply new cache
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      // Avoid multiple reloads
       if (window._kotrainer_reloadPending) return;
       window._kotrainer_reloadPending = true;
-      // short delay for UX (allow spinner to show)
-      setTimeout(() => location.reload(true), 600);
+      // small delay so UI can reflect action
+      setTimeout(() => location.reload(true), 500);
     });
   }
 
-  // Update button: send skipWaiting to SW then wait for controllerchange reload
-  updateBtn.addEventListener('click', async () => {
+  // Update button: instruct waiting SW to skipWaiting (only triggered by user)
+  updateBtn.addEventListener('click', () => {
     const waiting = modalEl._waitingWorker;
     if (!waiting) {
-      // fallback: try to message any SW
+      // Fallback: message active controller (less common)
       navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
       return;
     }
-    // show spinner
+    // show spinner / feedback
     spinner.classList.remove('hidden');
     updateText.textContent = 'Updating...';
-    // Send message to the waiting SW
+
     try {
-      // Some browsers require postMessage to the service worker registration waiting worker
+      // message the specific waiting worker
       waiting.postMessage({ action: 'skipWaiting' });
-      // Also try to message global controller as a backup
+      // also message global controller as backup
       navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
-    } catch(e){
+    } catch (e) {
       console.error(e);
     }
-    // close modal visually (reload will happen on controllerchange)
-    // keep spinner visible if user cancels or reload takes time
-    // optionally hide the modal but keep spinner on the page — here we hide it
+
+    // Do NOT hide the modal permanently — we can hide it while waiting for controllerchange:
     hideModal();
   });
 
 })();
 </script>
+
 
 </body>
 </html>
