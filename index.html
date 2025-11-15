@@ -1333,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script>
   async function loadWhatsNew() {
   try {
-    const response = await fetch('/updates.json'); // adjust path if needed
+    const response = await fetch('/updates.json', { cache: 'no-store' });
     if (!response.ok) throw new Error('Failed to load updates');
     const data = await response.json();
 
