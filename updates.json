@@ -8,6 +8,9 @@
     },
     {
       "description": "Added Native Korean Numbers"
+    },
+    {
+      "description": "Fixed bugs"
     }
   ]
 }
