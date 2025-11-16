@@ -1091,21 +1091,24 @@ const MOST_COMMON_KEYWORDS = [
   initCoverage();
 
   // When user changes batch:
-  if (batchSel) {
-    batchSel.addEventListener("change", () => {
-      currentBatch = (batchSel.value === "batch2") ? "batch2" : "batch1";
-      localStorage.setItem(LS_BATCH_KEY, currentBatch);
+  // When user changes batch:
+if (batchSel) {
+  batchSel.addEventListener("change", () => {
+    // accept whatever value is in the select (fallback to batch1)
+    currentBatch = batchSel.value || "batch1";
+    localStorage.setItem(LS_BATCH_KEY, currentBatch);
 
-      const cfg = loadCoverageForBatch(currentBatch);
-      start = cfg.start;
-      end   = cfg.end;
+    const cfg = loadCoverageForBatch(currentBatch);
+    start = cfg.start;
+    end   = cfg.end;
 
-      if (startEl) startEl.value = String(start);
-      if (endEl)   endEl.value   = String(end);
+    if (startEl) startEl.value = String(start);
+    if (endEl)   endEl.value   = String(end);
 
-      refreshCurrent(); // redraw Flash/Quiz/Vocab for this batch
-    });
-  }
+    refreshCurrent(); // redraw Flash/Quiz/Vocab for this batch
+  });
+}
+
 
   // Coverage now depends on BOTH: current batch + start/end for that batch
   function coverage(){
@@ -1451,8 +1454,6 @@ const MOST_COMMON_KEYWORDS = [
 
       <div class="p-4 max-h-64 overflow-auto space-y-3">
         <div id="swChangelog" class="text-sm text-slate-700">
-          • Minor fixes and vocab updates.<br>
-          • New batch items added.
         </div>
       </div>
 
