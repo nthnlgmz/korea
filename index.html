@@ -1625,7 +1625,24 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
 
 })();
 </script>
-
+<script>
+  /* How to add new dataset and how to update the html and script
+  1. Add Dataset in this format 
+  const example = [
+  {id:1, ko:"개", en:"any object"},
+  {id:2, ko:"명, 사람", en:"people"}
+  ]
+  2. Add option in coverage drawer. Search <option value="batch
+  3. Search "const BATCH_RANGES = {" and add the new dataset title
+  4. Search "function getDataset(batch){" and add the new dataset title
+  5. Search "if (!localStorage.getItem('kt_items')) {
+  localStorage.setItem('kt_items', JSON.stringify(ITEMS));
+}" and create new
+  6. Update the updates.json
+  7. Change the cache version in sw.js
+  
+</script>
 
 </body>
 </html>
+
