@@ -190,6 +190,7 @@
     <option value="batch2">2nd Batch of Vocabs</option>
     <option value="batch3">Counters & Numbers</option>
 <option value="batch4">Most Common Keywords</option>
+    <option value="batch5">Native Korean Numbers</option>
 
   </select>
 </div>
@@ -564,7 +565,32 @@ document.addEventListener('DOMContentLoaded', () => {
     {id:100,ko:"신호등",en:"traffic lights"},
     {id:101,ko:"길거리",en:"street"}
   ];
+  const NATIVE_KOREAN_NUMBERS = [
+  // 1-10
+  {id:1, ko:"하나", en:"One"},
+  {id:2, ko:"둘", en:"Two"},
+  {id:3, ko:"셋", en:"Three"},
+  {id:4, ko:"넷", en:"Four"},
+  {id:5, ko:"다섯", en:"Five"},
+  {id:6, ko:"여섯", en:"Six"},
+  {id:7, ko:"일곱", en:"Seven"},
+  {id:8, ko:"여덟", en:"Eight"},
+  {id:9, ko:"아홉", en:"Nine"},
+  {id:10, ko:"열", en:"Ten"},
   
+  // Tens (by 10)
+  {id:20, ko:"스물", en:"Twenty"},
+  {id:30, ko:"서른", en:"Thirty"},
+  {id:40, ko:"마흔", en:"Forty"},
+  {id:50, ko:"쉰", en:"Fifty"},
+  {id:60, ko:"예순", en:"Sixty"},
+  {id:70, ko:"일흔", en:"Seventy"},
+  {id:80, ko:"여든", en:"Eighty"},
+  {id:90, ko:"아흔", en:"Ninety"},
+  
+  // 100 (Native Korean numbers are not used past 99, so the Sino-Korean 'Baek' is used)
+  {id:100, ko:"백", en:"One Hundred (Baek)"}
+];
   const NEW_ITEMS = [
   {id:1, ko:"걷다", en:"to walk"},
   {id:2, ko:"시작하다", en:"to start"},
@@ -1010,7 +1036,8 @@ const MOST_COMMON_KEYWORDS = [
   batch1: { start: 1, end: 101 },
   batch2: { start: 1, end: 100 },
   batch3: { start: 1, end: COUNTERS_AND_NUMBERS.length },
-  batch4: { start: 1, end: MOST_COMMON_KEYWORDS.length }
+  batch4: { start: 1, end: MOST_COMMON_KEYWORDS.length },
+    batch5: { start: 1, end: NATIVE_KOREAN_NUMBERS.length }
 };
 
 
@@ -1034,6 +1061,7 @@ const MOST_COMMON_KEYWORDS = [
     case "batch2": return NEW_ITEMS;
     case "batch3": return COUNTERS_AND_NUMBERS;
     case "batch4": return MOST_COMMON_KEYWORDS;
+       case "batch5": return NATIVE_KOREAN_NUMBERS; 
     default: return ITEMS;
   }
 }
@@ -1426,8 +1454,18 @@ if (batchSel) {
 
   // Optional: cache vocab data snapshot in localStorage (tiny)
   if (!localStorage.getItem('kt_items')) {
-    localStorage.setItem('kt_items', JSON.stringify(ITEMS));
-  }
+  localStorage.setItem('kt_items', JSON.stringify(ITEMS));
+}
+if (!localStorage.getItem('kt_counters')) {
+  localStorage.setItem('kt_counters', JSON.stringify(COUNTERS_AND_NUMBERS));
+}
+if (!localStorage.getItem('kt_keywords')) {
+  localStorage.setItem('kt_keywords', JSON.stringify(MOST_COMMON_KEYWORDS));
+}
+if (!localStorage.getItem('kt_native_nums')) {
+  localStorage.setItem('kt_native_nums', JSON.stringify(NATIVE_KOREAN_NUMBERS));
+}
+
 });
 </script>
 
