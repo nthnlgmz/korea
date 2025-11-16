@@ -188,6 +188,9 @@
           class="border border-gray-300 rounded-lg p-2 text-sm w-full rounded-[12px]">
     <option value="batch1">1st Batch of Vocabs</option>
     <option value="batch2">2nd Batch of Vocabs</option>
+    <option value="batch3">Counters & Numbers</option>
+<option value="batch4">Most Common Keywords</option>
+
   </select>
 </div>
 
@@ -664,7 +667,130 @@ document.addEventListener('DOMContentLoaded', () => {
   {id:99, ko:"이름", en:"name"},
   {id:100, ko:"나이", en:"age"},
 ];
+const MOST_COMMON_KEYWORDS = [
+  {id:1, ko:"보기 문제", en:"sample question"},
+  {id:2, ko:"다음", en:"next"},
+  {id:3, ko:"고르십시오", en:"choose"},
+  {id:4, ko:"보기", en:"sample"},
+  {id:5, ko:"맞/알맞은", en:"correct/right/appropriate"},
+  {id:6, ko:"대답", en:"answer"},
+  {id:7, ko:"않은", en:"not/incorrect"},
+  {id:8, ko:"보고...", en:"read and..."},
+  {id:9, ko:"있습니까?", en:"is there...?"},
+  {id:10, ko:"하고 있습니까?", en:"...doing there?"},
+  {id:11, ko:"하고...", en:"(action) and..."},
+  {id:12, ko:"합니까?", en:"(action) interrogative"},
+  {id:13, ko:"무엇을 합니까?", en:"what does.../what can you do with?"},
+  {id:14, ko:"무엇?", en:"what?"},
+  {id:15, ko:"문제", en:"problem/question"},
+  {id:16, ko:"여자", en:"girl"},
+  {id:17, ko:"이것", en:"this(thing)"},
+  {id:18, ko:"사람", en:"man, a counter for person"},
+  {id:19, ko:"이", en:"this, next, two"},
+  {id:20, ko:"남자", en:"boy"},
+  {id:21, ko:"다른", en:"different"},
+  {id:22, ko:"반대인", en:"the opposite (antonyms)"},
+  {id:23, ko:"무슨", en:"what (what kind of/what noun)"},
+  {id:24, ko:"그림", en:"image/illustration"},
+  {id:25, ko:"표지판", en:"signboard"},
+  {id:26, ko:"질문", en:"question"},
+  {id:27, ko:"단어", en:"word/vocabulary"},
+  {id:28, ko:"이야기", en:"conversation"},
+  {id:29, ko:"가장", en:"most"},
+  {id:30, ko:"듣고", en:"listen and..."},
+  {id:32, ko:"어디?", en:"where?"},
+  {id:33, ko:"누가/누구?", en:"who?"},
+  {id:34, ko:"왜?", en:"what? (shortened)"},
+  {id:35, ko:"왜?", en:"why?"},
+  {id:36, ko:"어느", en:"which, what?"},
+  {id:37, ko:"얼마?", en:"how much?"},
+  {id:38, ko:"빈칸", en:"blank"},
+  {id:39, ko:"몇", en:"what (number)? (how many number?)"},
+  {id:40, ko:"몇 명입니까?", en:"how many persons?"},
+  {id:41, ko:"무엇입니까?", en:"what? (high formal question)"},
+  {id:42, ko:"어떻습니까?", en:"how, how about (looking for a description)"},
+  {id:43, ko:"아래", en:"bottom, below"},
+  {id:44, ko:"안에", en:"inside"},
+  {id:45, ko:"전에", en:"before"},
+  {id:46, ko:"없는", en:"nothing...not present"},
+  {id:47, ko:"으로", en:"by means of, direction towards, too"},
+  {id:48, "ko":"려고", en:"intend to, purpose"},
+  {id:49, ko:"뒤", en:"back, behind"},
+  {id:50, ko:"앞", en:"in front"},
+  {id:51, ko:"밖", en:"outside"},
+  {id:52, ko:"건너편(맞은편)", en:"across (across the street)"},
+  {id:53, ko:"오른쪽", en:"right side (direction)"},
+  {id:54, ko:"옆", en:"beside"},
+  {id:55, ko:"왼쪽", en:"left side (direction)"},
+  {id:56, ko:"계절", en:"seasons"},
+  {id:57, ko:"장소", en:"places"},
+  {id:58, ko:"신체", en:"body parts"},
+  {id:59, ko:"직업", en:"occupation"},
+  {id:60, ko:"주말", en:"weekend"},
+  {id:61, ko:"날씨", en:"weather"},
+  {id:62, ko:"일과", en:"daily routine"},
+  {id:63, ko:"사이에", en:"in between"},
+  {id:64, ko:"가운데/중간", en:"in the middle of"},
+  {id:65, ko:"보호구", en:"safety gears"},
+  {id:66, ko:"약속", en:"appointment, meet up, promise"},
+  {id:67, ko:"초대", en:"invitation"},
+  {id:68, ko:"농업", en:"agriculture"},
+  {id:69, ko:"여행", en:"travel"},
+  {id:70, ko:"증상", en:"symptoms"},
+  {id:71, ko:"교통", en:"traffic"},
+  {id:72, ko:"금지", en:"prohibition"},
+  {id:73, ko:"종교", en:"religion"},
+  {id:74, ko:"가족", en:"family"},
+  {id:75, ko:"의류", en:"clothing"},
+  {id:76, ko:"예절", en:"manner"},
+  {id:77, ko:"여행지", en:"tourist attractions"},
+  {id:78, ko:"집안일", en:"household chores"},
+  {id:79, ko:"과일", en:"fruits"},
+  {id:80, ko:"여행", en:"travel"},
+  {id:81, ko:"명", en:"counter for persons"},
+  {id:82, ko:"그루", en:"counter for trees, plants"},
+  {id:83, ko:"분", en:"counter for minutes"},
+  {id:84, ko:"사람", en:"counter for persons"},
+  {id:85, ko:"마리", en:"counter for animals"},
+  {id:86, ko:"잔", en:"counter for glasses, cups"},
+  {id:87, ko:"장", en:"counter for sheets, flat surfaces"},
+  {id:88, ko:"개", en:"counter for objects"},
+  {id:89, ko:"송이", en:"counter for bunches, picked flowers"},
+  {id:90, ko:"행사", en:"festival"},
+  {id:91, ko:"권", en:"counter for books"},
+  {id:92, ko:"활동", en:"activities"},
+  {id:93, ko:"숙소", en:"accommodation"},
+  {id:94, ko:"운동", en:"sports"},
+  {id:95, ko:"이름", en:"names"},
+  {id:96, ko:"휴가", en:"vacation"},
+  {id:97, ko:"공사", en:"constructions"},
+  {id:98, ko:"나이", en:"age"},
+  {id:99, ko:"시간", en:"hours"},
+  {id:100, ko:"날짜", en:"dates"}
+];
 
+  const COUNTERS_AND_NUMBERS = [
+  {id:1, ko:"개", en:"any object"},
+  {id:2, ko:"명, 사람", en:"people"},
+  {id:3, ko:"분", en:"people (polite)"},
+  {id:4, ko:"끼", en:"meal"},
+  {id:5, ko:"끼니", en:"servings of food"},
+  {id:6, ko:"채", en:"house/buildings"},
+  {id:7, ko:"마리", en:"animals"},
+  {id:8, ko:"그릇", en:"bowl"},
+  {id:9, ko:"접시", en:"plate"},
+  {id:10, ko:"공기", en:"food vessels"},
+  {id:11, ko:"권", en:"books"},
+  {id:12, ko:"켤레", en:"pairs"},
+  {id:13, ko:"병", en:"bottles"},
+  {id:14, ko:"잔", en:"drinks"},
+  {id:15, ko:"통", en:"letters"},
+  {id:16, ko:"장", en:"sheets"},
+  {id:17, ko:"대", en:"cars"},
+  {id:18, ko:"대", en:"injections"},
+  {id:19, ko:"통", en:"watermelon"},
+  {id:20, ko:"갑", en:"cigarettes/matches"}
+];
   const MAX_ID = ITEMS.reduce((m,x)=>Math.max(m,x.id),0);
 
   /* ===== Romanization engine with your rules ===== */
@@ -881,9 +1007,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Batch ranges (defaults for first time use of each batch)
   const BATCH_RANGES = {
-    batch1: { start: 1,   end: 101 }, // first batch (ITEMS)
-    batch2: { start: 1,   end: 100 }  // second batch (NEW_ITEMS)
-  };
+  batch1: { start: 1, end: 101 },
+  batch2: { start: 1, end: 100 },
+  batch3: { start: 1, end: COUNTERS_AND_NUMBERS.length },
+  batch4: { start: 1, end: MOST_COMMON_KEYWORDS.length }
+};
+
 
   const LS_BATCH_KEY = "kt_batch"; // which batch was last used
 
@@ -900,8 +1029,15 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function getDataset(batch){
-    return batch === "batch2" ? NEW_ITEMS : ITEMS;
+  switch(batch){
+    case "batch1": return ITEMS;
+    case "batch2": return NEW_ITEMS;
+    case "batch3": return COUNTERS_AND_NUMBERS;
+    case "batch4": return MOST_COMMON_KEYWORDS;
+    default: return ITEMS;
   }
+}
+
 
   function clampNum(v, lo, hi){
     v = parseInt(v, 10);
@@ -939,7 +1075,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function initCoverage(){
     // Load last used batch (default batch1)
     const savedBatch = localStorage.getItem(LS_BATCH_KEY);
-    currentBatch = (savedBatch === "batch2") ? "batch2" : "batch1";
+    currentBatch = savedBatch || "batch1";
+
 
     if (batchSel) batchSel.value = currentBatch;
 
