@@ -190,8 +190,10 @@
     <option value="batch1">1st Batch of Vocabs</option>
     <option value="batch2">2nd Batch of Vocabs</option>
     <option value="batch3">Counters & Numbers</option>
-<option value="batch4">Most Common Keywords</option>
+    <option value="batch4">Most Common Keywords</option>
     <option value="batch5">Native Korean Numbers</option>
+    <option value="batch6">Pointers to Review</option>
+    <option value="batch7">Counting Units</option>
 
   </select>
 </div>
@@ -1095,7 +1097,9 @@ const MOST_COMMON_KEYWORDS = [
   batch2: { start: 1, end: 100 },
   batch3: { start: 1, end: COUNTERS_AND_NUMBERS.length },
   batch4: { start: 1, end: MOST_COMMON_KEYWORDS.length },
-    batch5: { start: 1, end: NATIVE_KOREAN_NUMBERS.length }
+  batch5: { start: 1, end: NATIVE_KOREAN_NUMBERS.length },
+  batch6: { start: 1, end: POINTERS_TO_REVIEW.length },
+  batch7: { start: 1, end: COUNTING_UNITS.length }
 };
 
 
@@ -1119,7 +1123,9 @@ const MOST_COMMON_KEYWORDS = [
     case "batch2": return NEW_ITEMS;
     case "batch3": return COUNTERS_AND_NUMBERS;
     case "batch4": return MOST_COMMON_KEYWORDS;
-       case "batch5": return NATIVE_KOREAN_NUMBERS; 
+    case "batch5": return NATIVE_KOREAN_NUMBERS; 
+    case "batch6": return POINTERS_TO_REVIEW;
+    case "batch7": return COUNTING_UNITS; 
     default: return ITEMS;
   }
 }
@@ -1522,6 +1528,12 @@ if (!localStorage.getItem('kt_keywords')) {
 }
 if (!localStorage.getItem('kt_native_nums')) {
   localStorage.setItem('kt_native_nums', JSON.stringify(NATIVE_KOREAN_NUMBERS));
+}
+if (!localStorage.getItem('kt_ptr')) {
+  localStorage.setItem('kt_ptr', JSON.stringify(POINTERS_TO_REVIEW));
+}
+if (!localStorage.getItem('kt_cn')) {
+  localStorage.setItem('kt_cn', JSON.stringify(COUNTING_UNITS));
 }
 
 });
