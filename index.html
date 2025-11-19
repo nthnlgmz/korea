@@ -1564,6 +1564,8 @@ if (batchSel) {
   let cScore = 0;
   let cCurrent = null;
 
+  const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
   // Native Korean Number Logic (1-99)
   function numToNativeAge(n) {
     if(n > 99) return ""; 
@@ -1588,14 +1590,43 @@ if (batchSel) {
   }
 
   const genDate = () => {
-    const m = Math.floor(Math.random()*12)+1;
-    const d = Math.floor(Math.random()*28)+1;
+    // Years 1950-2030
+    const year = Math.floor(Math.random() * (2030 - 1950 + 1)) + 1950;
+    const monthIdx = Math.floor(Math.random() * 12); // 0-11
+    const month = monthIdx + 1; // 1-12
+
+    // Determine max days in month (simplistic leap year check for Feb)
+    let maxDays = 31;
+    if ([4,6,9,11].includes(month)) maxDays = 30;
+    if (month === 2) {
+        const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+        maxDays = isLeap ? 29 : 28;
+    }
+    const day = Math.floor(Math.random() * maxDays) + 1;
+
+    // Construct Prompt: e.g., "January 24, 2011"
+    const prompt = `${MONTHS_EN[monthIdx]} ${day}, ${year}`;
+
+    // Construct Answer (Sino-Korean text reading)
+    // Year
+    const yK = intToKoreanHangul(year).replace(" 원", "");
+    
+    // Month (Handle irregularities: 6월 -> 유월, 10월 -> 시월)
+    let mK = intToKoreanHangul(month).replace(" 원", "");
+    if (month === 6) mK = "유";
+    if (month === 10) mK = "시";
+    
+    // Day
+    const dK = intToKoreanHangul(day).replace(" 원", "");
+
+    const ansStr = `${yK}년 ${mK}월 ${dK}일`.trim();
+
     return {
       cat: "Date",
-      prompt: `${m}월 ${d}일`,
+      prompt: prompt,
       sub: "", 
-      ans: [`${m}/${d}`, `${m}-${d}`],
-      kor: `${m}월 ${d}일`
+      ans: [ansStr.replace(/\s+/g,"")], // stripped spaces
+      kor: ansStr
     };
   };
 
