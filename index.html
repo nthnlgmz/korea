@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@600;800;900&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=quiz,playing_cards,dictionary,voice_selection,flip,arrow_back,arrow_forward,shuffle,multimodal_hand_eye,step_over,restart_alt,menu,close" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=quiz,playing_cards,dictionary,voice_selection,flip,arrow_back,arrow_forward,shuffle,multimodal_hand_eye,step_over,restart_alt,menu,close,assignment,check_circle" />
 
 <style>
   .material-symbols-outlined{
@@ -80,26 +80,42 @@
   .chip-ok{background:#dcfce7;color:#166534;border-color:#bbf7d0}
   .chip-bad{background:#fee2e2;color:#7f1d1d;border-color:#fecaca}
   .chip-muted{background:#e5e7eb;color:#334155;border-color:#e2e8f0}
-  input[type=text]{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+  
+  /* Default Inputs */
+  input[type=text], input[type=number], select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px}
+  
   .btn-row{display:flex;gap:10px;flex-wrap:wrap}
   .btn-row>button{flex:1 1 140px}
   .primary{background:linear-gradient(135deg,var(--accent-2),var(--accent-3));color:#fff;border:none;border-radius:12px;padding:12px 14px;font-weight:800}
   .secondary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
   .btn-ico{display:inline-flex;align-items:center;gap:8px;justify-content:center}
   .ghost{background:transparent;color:var(--accent);border:1px dashed var(--accent);border-radius:12px;padding:12px 14px}
+  
+  /* Quiz Input Styles */
   .input-with-btn{position:relative}
   .input-with-btn>input{padding-right:7.25rem}
   .check-in-input{position:absolute;right:10px;top:50%;transform:translateY(-50%);padding:10px 12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),var(--accent-3));color:#fff;font-weight:800}
-  .big-ko{font-family:"Noto Sans KR",Inter,system-ui;font-size:clamp(28px,6.5vw,48px);font-weight:900}
+  
+  .big-ko{
+    font-family:"Noto Sans KR",Inter,system-ui;
+    font-size:clamp(28px,6.5vw,48px);
+    font-weight:900;
+    /* Allow currency to break lines if too long */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+  }
   .prompt-en{font-size:clamp(18px,4.5vw,24px);font-weight:800}
   .note{font-size:12px;color:#64748b}
 
-  .bnav{position:fixed;left:0;bottom:0;z-index:50;width:100%;height:64px;background:#fff;border-top:1px solid var(--line)}
-  .bnav-grid{display:grid;height:100%;grid-template-columns:repeat(3,1fr);max-width:640px;margin:0 auto;font-weight:600}
-  .bnav-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px;background:transparent;border:none}
+  /* Bottom Nav */
+  .bnav{position:fixed;left:0;bottom:0;z-index:50;width:100%;height:70px;background:#fff;border-top:1px solid var(--line)}
+  .bnav-grid{display:grid;height:100%;grid-template-columns:repeat(4,1fr);max-width:640px;margin:0 auto;font-weight:600}
+  .bnav-btn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:0 5px;background:transparent;border:none}
   .bnav-ico,.bnav-txt{color:#64748b}
   .bnav-btn.active .bnav-ico,.bnav-btn.active .bnav-txt{color:var(--accent)}
 
+  /* Sticky Search */
   .searchbar-wrap{position:sticky;top:0;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
   .searchbar-inner{max-width:980px;margin:auto;padding:10px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
   .icon-btn{background:#fff;border:1px solid var(--line);color:#334155;width:42px;height:42px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center}
@@ -107,6 +123,7 @@
   .searchbar-wrap .relative>button[type=submit]:hover{background:#b45309}
   .searchbar-wrap input[type=search]{padding-left:2.75rem}
 
+  /* Drawer */
   .drawer{position:fixed;inset:0;z-index:70;pointer-events:none}
   .drawer.open{pointer-events:auto}
   .drawer-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.35);opacity:0;transition:opacity .2s}
@@ -116,6 +133,7 @@
   .drawer-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
   .drawer-body{padding:14px 16px;display:grid;gap:16px}
 
+  /* Floating Label Settings from Drawer */
   .fg{position:relative;display:grid;grid-template-rows:auto auto}
   .fg input{width:100%;padding:18px 14px 14px;border:1.5px solid var(--fld-border);border-radius:var(--fld-radius);background:#fff;outline:none}
   .fg label{position:absolute;left:12px;top:12px;padding:0 6px;background:#fff;color:#64748b;pointer-events:none;transform-origin:left top;transition:transform .12s,color .12s}
@@ -129,6 +147,7 @@
     border-radius:6px
   }
 
+  /* Grid */
   .voc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
   @media (max-width:1100px){.voc-grid{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:800px){.voc-grid{grid-template-columns:repeat(2,1fr)}}
@@ -141,6 +160,28 @@
   .krw-roman{font-size:.95rem !important;line-height:1.3rem !important;font-weight:600}
   .krw-hangul{font-size:1.15rem !important;line-height:1.6rem !important;font-weight:700;color:#9a3412;cursor:pointer}
   .krw-hangul:active{opacity:.85}
+
+  /* --- SPECIAL ASSESSMENT STYLES (Tailwind mapping) --- */
+  .border-default-medium { border-color: #cbd5e1; } /* slate-300 */
+  .focus\:border-brand:focus { border-color: var(--accent); }
+  .focus\:ring-brand-medium:focus { --tw-ring-color: var(--accent); --tw-ring-opacity: 0.5; }
+  .bg-brand { background: var(--accent); }
+  .hover\:bg-brand-strong:hover { background: var(--accent-3); }
+  .text-heading { color: var(--text); }
+  .text-body { color: var(--muted); }
+  .focus\:text-fg-brand:focus { color: var(--accent); }
+  
+  /* Updated Assess Input - Fixed Box Style */
+  .assess-input {
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    padding: 16px 14px 14px 14px !important; /* more comfortable padding */
+  }
+  .assess-input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 1px var(--accent) !important;
+  }
 </style>
 </head>
 <body>
@@ -299,6 +340,60 @@
     </div>
   </div>
 
+  <!-- ASSESSMENT MODE (NEW) -->
+  <div class="card" id="assessmentArea" style="display:none;margin-top:12px">
+    <div class="row mb-4 justify-between items-center">
+      <strong class="text-lg font-extrabold text-orange-700">Real Life Assessment</strong>
+      <div class="pill"><span class="material-symbols-outlined" style="font-size:16px">check_circle</span>&nbsp;Score: <span id="cScore">0</span></div>
+    </div>
+
+    <!-- Category Filter Dropdown -->
+    <div class="mb-4">
+      <label for="cTypeSelect" class="block text-sm font-medium text-slate-600 mb-1">Question Type:</label>
+      <select id="cTypeSelect" class="w-full p-2 border border-gray-300 rounded-lg text-sm">
+        <option value="all" selected>Mixed (Random)</option>
+        <option value="time">Time</option>
+        <option value="date">Date</option>
+        <option value="currency">Currency</option>
+        <option value="phone">Telephone</option>
+        <option value="age">Age</option>
+      </select>
+    </div>
+
+    <!-- Prompt Container -->
+    <div class="text-center py-6 px-2 bg-orange-50 rounded-xl border border-orange-100 mb-6">
+      <div class="text-sm text-slate-500 uppercase font-bold tracking-wider mb-2" id="cCategory">CATEGORY</div>
+      <div class="big-ko mb-2" id="cPrompt">—</div>
+      <div class="text-slate-600 text-sm" id="cSubPrompt">Translate this to Korean</div>
+    </div>
+
+    <!-- Floating Input Form (Matched to .fg style in drawer) -->
+    <div class="fg mb-6">
+      <input type="text" id="cInput" placeholder=" " autocomplete="off" />
+      <label for="cInput">Your Answer (Hangul)</label>
+    </div>
+
+    <!-- Feedback Area -->
+    <div id="cFeedback" class="hidden mb-4 p-3 rounded-lg bg-gray-50 border text-center"></div>
+
+    <!-- Actions -->
+    <div class="grid grid-cols-2 gap-3">
+      <button id="cCheck" class="text-white bg-brand border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-xl text-sm px-4 py-3 focus:outline-none flex items-center justify-center gap-2">
+        Submit
+      </button>
+      <button id="cNext" class="text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 font-medium leading-5 rounded-xl text-sm px-4 py-3 focus:outline-none flex items-center justify-center gap-2">
+        Skip / Next
+      </button>
+    </div>
+    
+    <div class="mt-4 text-center">
+      <button id="cSpeak" class="text-brand text-sm font-bold flex items-center justify-center gap-1 mx-auto p-2">
+        <span class="material-symbols-outlined" style="font-size:18px">voice_selection</span> Listen
+      </button>
+    </div>
+  </div>
+
+
   <!-- Flashcards -->
   <div class="card" id="practiceArea" style="display:none;margin-top:12px">
     <div class="row">
@@ -351,6 +446,11 @@
     <button id="navQuiz" type="button" class="bnav-btn">
       <span class="material-symbols-outlined bnav-ico mb-1">quiz</span>
       <span class="bnav-txt text-sm">Quiz</span>
+    </button>
+    <!-- New Assessment Button -->
+    <button id="navAssess" type="button" class="bnav-btn">
+      <span class="material-symbols-outlined bnav-ico mb-1">assignment</span>
+      <span class="bnav-txt text-sm">Assess</span>
     </button>
     <button id="navVocab" type="button" class="bnav-btn">
       <span class="material-symbols-outlined bnav-ico mb-1">dictionary</span>
@@ -580,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
   {id:8, ko:"여덟", en:"Eight"},
   {id:9, ko:"아홉", en:"Nine"},
   {id:10, ko:"열", en:"Ten"},
-  
+   
   // Tens (by 10)
   {id:11, ko:"스물", en:"Twenty"},
   {id:12, ko:"서른", en:"Thirty"},
@@ -590,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
   {id:16, ko:"일흔", en:"Seventy"},
   {id:17, ko:"여든", en:"Eighty"},
   {id:18, ko:"아흔", en:"Ninety"},
-  
+   
   // 100 (Native Korean numbers are not used past 99, so the Sino-Korean 'Baek' is used)
   {id:19, ko:"백", en:"One Hundred"}
 ];
@@ -1249,13 +1349,14 @@ if (batchSel) {
   /* ===== Common UI helpers ===== */
   function aChip(txt,type){const el=$("#aChip");el.className="chip "+(type==="ok"?"chip-ok":type==="bad"?"chip-bad":"chip-muted");el.textContent=txt}
   function bChip(txt,type){const el=$("#bChip");el.className="chip "+(type==="ok"?"chip-ok":type==="bad"?"chip-bad":"chip-muted");el.textContent=txt}
-  function hideAll(){["#quizA","#quizB","#practiceArea","#vocabArea"].forEach(s=>{$(s).style.display="none"})}
+  function hideAll(){["#quizA","#quizB","#practiceArea","#vocabArea","#assessmentArea"].forEach(s=>{$(s).style.display="none"})}
   function setTab(id){document.querySelectorAll(".bnav-btn").forEach(b=>b.classList.remove("active"));$("#"+id).classList.add("active")}
   function refreshCurrent(){
     if($("#quizA").style.display!=="none"){initQuizA();return}
     if($("#quizB").style.display!=="none"){initQuizB();return}
     if($("#practiceArea").style.display!=="none"){initPractice();return}
     if($("#vocabArea").style.display!=="none"){initVocab();return}
+    if($("#assessmentArea").style.display!=="none"){initAssessment();return}
   }
 
   /* ===== Flashcards ===== */
@@ -1459,6 +1560,257 @@ if (batchSel) {
   });
   $("#bRetry").addEventListener("click",initQuizB);
 
+  /* ===== Assessment Mode ===== */
+  let cScore = 0;
+  let cCurrent = null;
+
+  // Native Korean Number Logic (1-99)
+  function numToNativeAge(n) {
+    if(n > 99) return ""; 
+    const units = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
+    const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+    
+    // n < 10: just unit
+    if (n < 10) return units[n];
+    
+    const t = Math.floor(n/10);
+    const u = n % 10;
+    
+    // Special handling for 20 "seumu"
+    if (n === 20) return "스무";
+    
+    // Standard tens logic
+    // If u is 0 (10, 30, 40...), use pure ten word (except 20 handled above)
+    if (u === 0) return tens[t];
+    
+    // If composite (21, 32...), use Ten + Unit
+    return tens[t] + units[u];
+  }
+
+  const genDate = () => {
+    const m = Math.floor(Math.random()*12)+1;
+    const d = Math.floor(Math.random()*28)+1;
+    return {
+      cat: "Date",
+      prompt: `${m}월 ${d}일`,
+      sub: "", 
+      ans: [`${m}/${d}`, `${m}-${d}`],
+      kor: `${m}월 ${d}일`
+    };
+  };
+
+  const genTime = () => {
+    const h = Math.floor(Math.random()*12)+1;
+    
+    // 20% chance for exactly 30 minutes to practice 'ban'
+    // 10% chance for exactly 0 minutes
+    // Remaining 70% random 1-59 (excluding 30)
+    let m;
+    const r = Math.random();
+    if (r < 0.2) m = 30;
+    else if (r < 0.3) m = 0;
+    else {
+        m = Math.floor(Math.random()*59) + 1;
+        if (m===30) m=31; // avoid double dipping probability if needed, or just let it be
+    }
+    
+    const minStr = m===0 ? "00" : (m < 10 ? "0"+m : m); // Fixed minStr logic to show :00 correctly in prompt
+    
+    // AM/PM Logic
+    const isAm = Math.random() > 0.5;
+    const amPmStr = isAm ? "AM" : "PM";
+    const amPmKor = isAm ? "오전" : "오후";
+    
+    const prompt = `${h}:${minStr} ${amPmStr}`;
+    
+    // Build Korean string
+    const hK = ["","한","두","세","네","다섯","여섯","일곱","여덟","아홉","열","열한","열두"][h];
+    
+    // Standard minute string
+    const mK_std = m===0 ? "" : intToKoreanHangul(m).replace(" 원","").replace(/영/g,"") + "분";
+    const ansStd = `${amPmKor} ${hK}시 ${mK_std}`.trim();
+    
+    const answers = [ansStd.replace(/\s+/g,"")];
+    
+    // Special case for 30 minutes -> "ban"
+    if (m === 30) {
+        const ansBan = `${amPmKor} ${hK}시 반`.trim();
+        answers.push(ansBan.replace(/\s+/g,""));
+    }
+    
+    return {
+      cat: "Time",
+      prompt: prompt,
+      sub: "", 
+      ans: answers, 
+      kor: ansStd // TTS reads the standard precise time
+    };
+  };
+
+  const genCurrency = () => {
+    // 1 to 12 digits. Max 1 zero digit allowed in the number string.
+    let numStr = "";
+    let zeroCount = 0;
+    const len = Math.floor(Math.random() * 12) + 1; // 1..12 length
+
+    for(let i=0; i<len; i++) {
+      let d;
+      if (i===0) {
+        // First digit 1-9
+        d = Math.floor(Math.random() * 9) + 1;
+      } else {
+        // Subsequent digits 0-9
+        // If we already have 1 zero, force non-zero (1-9)
+        if (zeroCount >= 1) {
+           d = Math.floor(Math.random() * 9) + 1;
+        } else {
+           d = Math.floor(Math.random() * 10);
+           if (d === 0) zeroCount++;
+        }
+      }
+      numStr += d;
+    }
+    
+    const val = parseInt(numStr, 10);
+    const kor = intToKoreanHangul(val);
+    
+    return {
+      cat: "Currency",
+      prompt: `₩${parseInt(numStr).toLocaleString()}`,
+      sub: "",
+      ans: [kor.replace(/\s+/g,"")],
+      kor: kor
+    };
+  };
+
+  const genPhone = () => {
+    // 010 + random 4 + random 4
+    // p2/p3 completely random digit by digit to ensure variety
+    const rand4 = () => {
+       let s = "";
+       for(let i=0; i<4; i++) s += Math.floor(Math.random()*10);
+       return s;
+    };
+    
+    const p2 = rand4();
+    const p3 = rand4();
+    const full = `010-${p2}-${p3}`;
+    
+    // Sino numbers for phone
+    const dMap = ["공","일","이","삼","사","오","육","칠","팔","구"];
+    let reading = "";
+    for(let c of full) {
+      if(c==="-") reading += "에 "; 
+      else reading += dMap[parseInt(c)] + " ";
+    }
+    
+    return {
+      cat: "Telephone",
+      prompt: full,
+      sub: "", 
+      ans: [reading.replace(/\s+/g,"").replace(/에/g,"")], 
+      kor: reading
+    };
+  };
+
+  const genAge = () => {
+    // 1 to 120
+    const age = Math.floor(Math.random()*120)+1;
+    
+    let korStr = "";
+    
+    if (age <= 99) {
+       korStr = numToNativeAge(age) + "살";
+    } else {
+       // 100+ logic: 100 is 백 (Sino usually used from 100)
+       // 100: 백살
+       // 101: 백한살
+       // 120: 백스무살
+       const remainder = age - 100;
+       if (remainder === 0) korStr = "백살";
+       else korStr = "백" + numToNativeAge(remainder) + "살";
+    }
+
+    return {
+      cat: "Age",
+      prompt: `${age} years old`,
+      sub: "", 
+      ans: [korStr],
+      kor: korStr
+    };
+  };
+
+  function initAssessment(){
+    hideAll();
+    $("#quizBar").style.display="none";
+    $("#assessmentArea").style.display="block";
+    $("#cScore").textContent = cScore;
+    nextAssessment();
+  }
+
+  function nextAssessment(){
+    const type = $("#cTypeSelect").value;
+    let generator;
+    
+    if(type === "time") generator = genTime;
+    else if(type === "date") generator = genDate;
+    else if(type === "currency") generator = genCurrency;
+    else if(type === "phone") generator = genPhone;
+    else if(type === "age") generator = genAge;
+    else {
+      // Mixed
+      const list = [genTime, genDate, genCurrency, genPhone, genAge];
+      generator = list[Math.floor(Math.random()*list.length)];
+    }
+    
+    cCurrent = generator();
+    
+    $("#cCategory").textContent = cCurrent.cat;
+    $("#cPrompt").textContent = cCurrent.prompt;
+    $("#cSubPrompt").textContent = cCurrent.sub;
+    $("#cInput").value = "";
+    $("#cFeedback").className = "hidden mb-4 p-3 rounded-lg bg-gray-50 border text-center";
+    $("#cInput").focus();
+  }
+
+  // Listen to dropdown change
+  $("#cTypeSelect").addEventListener("change", () => {
+     nextAssessment();
+  });
+
+  function checkAssessment(){
+    if(!cCurrent) return;
+    const input = $("#cInput").value.replace(/\s+/g,"");
+    const answers = cCurrent.ans.map(a => a.replace(/\s+/g,""));
+    
+    let correct = false;
+    if(answers.includes(input)) correct = true;
+    
+    const fb = $("#cFeedback");
+    fb.classList.remove("hidden");
+    
+    if(correct){
+      cScore++;
+      $("#cScore").textContent = cScore;
+      fb.className = "mb-4 p-3 rounded-lg bg-green-100 border border-green-300 text-green-800 text-center font-bold";
+      fb.innerHTML = `<span class="material-symbols-outlined align-middle">check_circle</span> Correct!`;
+      setTimeout(nextAssessment, 1000);
+    } else {
+      fb.className = "mb-4 p-3 rounded-lg bg-red-100 border border-red-300 text-red-800 text-center";
+      fb.innerHTML = `<strong>Incorrect.</strong><br>Answer: ${cCurrent.kor}`;
+    }
+  }
+
+  $("#cCheck").addEventListener("click", checkAssessment);
+  $("#cNext").addEventListener("click", nextAssessment);
+  $("#cSpeak").addEventListener("click", () => {
+    if(cCurrent) speak(cCurrent.kor);
+  });
+  $("#cInput").addEventListener("keydown", e => {
+    if(e.key === "Enter") checkAssessment();
+  });
+
+
   /* ===== Vocab ===== */
   function initVocab(){
     hideAll();
@@ -1499,10 +1851,12 @@ if (batchSel) {
     setTab("navQuiz");
   }
   function showVocab(){initVocab();setTab("navVocab")}
+  function showAssess(){initAssessment();setTab("navAssess")}
 
   $("#navFlash").addEventListener("click",showFlash);
   $("#navQuiz").addEventListener("click",showQuiz);
   $("#navVocab").addEventListener("click",showVocab);
+  $("#navAssess").addEventListener("click",showAssess);
 
   $("#quizMode").addEventListener("change",()=>{
     $("#quizMode").value==="B" ? initQuizB() : initQuizA();
@@ -1512,9 +1866,12 @@ if (batchSel) {
   showFlash();
   
   // PWA: register service worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(console.error);
-  }
+  /* Disabled Service Worker registration to prevent console errors in blob/sandbox environments.
+     Uncomment the lines below if hosting on HTTPS/localhost.
+  */
+  // if ('serviceWorker' in navigator) {
+  //   navigator.serviceWorker.register('sw.js').catch(console.error);
+  // }
 
   // Optional: cache vocab data snapshot in localStorage (tiny)
   if (!localStorage.getItem('kt_items')) {
@@ -1577,23 +1934,19 @@ if (!localStorage.getItem('kt_cn')) {
   </div>
 </div>
 <script>
-  async function loadWhatsNew() {
+/* Disabled external fetch for updates to prevent 404/protocol errors in standalone preview.
+*/
+async function loadWhatsNew() {
   try {
-    const response = await fetch('/updates.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Failed to load updates');
-    const data = await response.json();
-
+    // Disabled fetch:
+    // const response = await fetch('/updates.json', { cache: 'no-store' });
+    // ...
+    
+    // Static placeholder:
     const changelog = document.getElementById('swChangelog');
-    if (data.updates && data.updates.length) {
-      changelog.innerHTML = data.updates
-        .map(update => `• ${update.description}`)
-        .join('<br>');
-    } else {
-      changelog.innerHTML = 'No updates available.';
-    }
+    changelog.innerHTML = 'No updates available in offline mode.';
   } catch (err) {
     console.error(err);
-    document.getElementById('swChangelog').innerHTML = 'Failed to load updates.';
   }
 }
 
@@ -1626,70 +1979,17 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
     modalEl._waitingWorker = worker || registration.waiting || null;
   }
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').then(reg => {
-
-      // If there's already a waiting worker (previous update installed) -> show modal
-      if (reg.waiting) {
-        setWaitingWorker(reg, reg.waiting);
-        // populate changelog if you fetch it; leave default otherwise
-        showModal();
-      }
-
-      // Listen for updatefound: a new worker is installing
-      reg.addEventListener('updatefound', () => {
-        const newSW = reg.installing;
-        if (!newSW) return;
-        // when the state becomes 'installed' and there's a controller, it's an update
-        newSW.addEventListener('statechange', () => {
-          if (newSW.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              // NEW UPDATE READY — show modal and keep waiting worker reference
-              setWaitingWorker(reg, reg.waiting || newSW);
-              showModal();
-            } else {
-              // first-time install — ignore (no update prompt)
-            }
-          }
-        });
-      });
-
-      // Optional: re-check periodically (in case registration updated in background)
-      // Not required; reg.waiting check above covers most cases.
-
-    }).catch(console.error);
-
-    // When controller changes (new SW took control), reload to apply new cache
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (window._kotrainer_reloadPending) return;
-      window._kotrainer_reloadPending = true;
-      // small delay so UI can reflect action
-      setTimeout(() => location.reload(true), 500);
-    });
+  // Service Worker logic disabled for standalone file execution
+  if ('serviceWorker' in navigator && location.protocol !== 'blob:' && location.protocol !== 'data:') {
+    // Original logic preserved but guarded
+    /*
+    navigator.serviceWorker.register('/sw.js').then(reg => { ... });
+    */
   }
 
   // Update button: instruct waiting SW to skipWaiting (only triggered by user)
   updateBtn.addEventListener('click', () => {
-    const waiting = modalEl._waitingWorker;
-    if (!waiting) {
-      // Fallback: message active controller (less common)
-      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
-      return;
-    }
-    // show spinner / feedback
-    spinner.classList.remove('hidden');
-    updateText.textContent = 'Updating...';
-
-    try {
-      // message the specific waiting worker
-      waiting.postMessage({ action: 'skipWaiting' });
-      // also message global controller as backup
-      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
-    } catch (e) {
-      console.error(e);
-    }
-
-    // Do NOT hide the modal permanently — we can hide it while waiting for controllerchange:
+    // Logic disabled
     hideModal();
   });
 
@@ -1710,9 +2010,8 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
 }" and create new
   6. Update the updates.json
   7. Change the cache version in sw.js */
-  
+   
 </script>
 
 </body>
 </html>
-
