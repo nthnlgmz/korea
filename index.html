@@ -991,7 +991,7 @@ const MOST_COMMON_KEYWORDS = [
   };
   const RR_JUNG = {
     "ㅏ":"a","ㅐ":"ae","ㅑ":"ya","ㅒ":"yae","ㅓ":"eo","ㅔ":"e","ㅕ":"yeo","ㅖ":"ye",
-    "ㅗ":"o","ㅘ":"wa","ㅙ":"wae","ㅚ":"oe",
+    "ㅗ":"o","ㅘ":"wae","ㅙ":"wae","ㅚ":"oe",
     "ㅛ":"yo",
     "ㅜ":"u","ㅝ":"wo","ㅞ":"we","ㅟ":"wi",
     "ㅠ":"yu",
@@ -1438,23 +1438,38 @@ if (batchSel) {
     $("#aActions").style.display="none";
     $("#aRetryWrap").style.display="flex";
   }
+
+  // Helper function for Quiz A digit checking
+  function wordToDigit(word) {
+      const map = {
+          'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+          'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+          'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
+          'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
+          'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50,
+          'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+          'one hundred': 100
+      };
+      return map[word.toLowerCase()] || null;
+  }
+
   function checkA(){
     const it=aPool[aIdx];
     const ans=$("#aAnswer").value;
     if(!ans){aChip("Type an answer","bad");return}
     
+    const inputTrimmed = ans.trim();
     const normalizedAnswer = normEn(ans);
     const normalizedCorrect = normEn(it.en);
     
-    // Check if the input is a numeric digit that matches the expected English word (e.g., 1 === one)
     let isCorrect = normalizedAnswer === normalizedCorrect;
+    
     if (!isCorrect) {
-        // Attempt to convert English word to number and check against numeric input
-        const numberMap = { 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 
-                            'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'ten': '10' };
+        // 1. Check if the expected answer is a number word (e.g., 'twenty')
+        const expectedDigit = wordToDigit(normalizedCorrect);
         
-        const expectedNumber = numberMap[normalizedCorrect];
-        if (expectedNumber && ans.trim() === expectedNumber) {
+        // 2. Check if the user input is a digit string that matches the expected digit value
+        if (expectedDigit !== null && inputTrimmed === String(expectedDigit)) {
             isCorrect = true;
         }
     }
@@ -1594,35 +1609,47 @@ if (batchSel) {
   // Sino Korean Numbers (for Date) - The core conversion logic relies on intToKoreanHangul,
   // but the specific irregularities for month units (유월/시월) are handled in genDate.
   
-  // Native Korean Number Logic (1-99) - Correctly constructs the full word string
+  // Native Korean Number Logic (1-99) - Simplified and corrected for counters (drops final consonant/vowel)
+  // Reverting to the simpler version which correctly handles 1-4, 10, and 20 contractions.
   function numToNativeAge(n) {
-    // If n is invalid for Native (shouldn't happen here, but safe guard)
     if(n < 1 || n > 99) return ""; 
     
-    // Correct Native Korean units in word form (1-9)
-    const units = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
-    // Correct Native Korean tens in word form (10, 20, 30, ...)
+    // Base forms of units (1-9)
+    const units = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"];
+    // Base forms of tens (10, 20, 30, ...)
     const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
-    
-    const t = Math.floor(n/10);
+
+    const t = Math.floor(n / 10);
     const u = n % 10;
     
-    let result = "";
+    // Special handling for 1-4 (contractions) and 20 (contraction)
+    if (n >= 1 && n <= 4) {
+        return ["", "한", "두", "세", "네"][n]; // 한, 두, 세, 네
+    }
+    if (n === 20) return "스무";
 
-    // Handle TENS part (10, 20, 30, ...)
-    if (t > 0) {
-        // Use full tens word. Note: 10 uses '열' which is correct.
-        result += tens[t]; 
+    if (t === 0) {
+        // Ages 5-9: use base form (다섯, 여섯, ...)
+        return units[n];
+    } else {
+        // Ages 10, 30, 40, ... 90 (clean tens):
+        if (u === 0) return tens[t]; 
+        
+        // Ages 11-19, 21-29, ... (composites)
+        let result = tens[t]; // e.g., 열, 서른, 마흔
+        
+        // Handle units for composites
+        if (u > 0) {
+            // Units 1-4 contract (한, 두, 세, 네)
+            if (u >= 1 && u <= 4) {
+                 result += ["", "한", "두", "세", "네"][u];
+            } else {
+                 // Units 5-9 use base form (다섯, 여섯, ...)
+                 result += units[u];
+            }
+        }
+        return result;
     }
-    
-    // Handle UNITS part (1, 2, 3, ...)
-    if (u > 0) {
-        // If it's a number from 1 to 9 (and not 10, 20 etc), use the unit directly
-        // If it's a composite (21, 32), concatenate the unit word.
-        result += units[u];
-    }
-    
-    return result;
   }
 
   const genDate = () => {
