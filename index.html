@@ -691,7 +691,7 @@ document.addEventListener('DOMContentLoaded', () => {
   {id:17, ko:"여든", en:"Eighty"},
   {id:18, ko:"아흔", en:"Ninety"},
    
-  // 100 (Native Korean numbers are not used past 99, so the Sino-Korean 'Baek' is used)
+  // 100 (Native Korean numbers are not used past 99, so the Sino-Korean '백' is used)
   {id:19, ko:"백", en:"One Hundred"}
 ];
   const NEW_ITEMS = [
@@ -1176,6 +1176,14 @@ const MOST_COMMON_KEYWORDS = [
   }
 
   const normEn = s => (s||"").toLowerCase().replace(/^to\s+/,"").replace(/['’]/g,"").replace(/[^a-z0-9]+/g," ").trim();
+  // Utility function to normalize English text and handle digits as well
+  const normEnWithDigits = s => (s||"")
+      .toLowerCase()
+      .replace(/^to\s+/,"")
+      .replace(/['’]/g,"")
+      .replace(/[^a-z0-9]+/g," ")
+      .trim();
+
   const normKo = s => (s||"").replace(/\s+/g,"").trim();
   const normRR = s => romanizeHangulRR(s).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
 
@@ -1356,7 +1364,7 @@ if (batchSel) {
     if($("#quizB").style.display!=="none"){initQuizB();return}
     if($("#practiceArea").style.display!=="none"){initPractice();return}
     if($("#vocabArea").style.display!=="none"){initVocab();return}
-    if($("#assessmentArea").style.display!=="none"){initAssessment();return}
+    if($("#assessmentArea").style.display!=="="){initAssessment();return}
   }
 
   /* ===== Flashcards ===== */
@@ -1434,7 +1442,24 @@ if (batchSel) {
     const it=aPool[aIdx];
     const ans=$("#aAnswer").value;
     if(!ans){aChip("Type an answer","bad");return}
-    if(normEn(ans)===normEn(it.en)){
+    
+    const normalizedAnswer = normEn(ans);
+    const normalizedCorrect = normEn(it.en);
+    
+    // Check if the input is a numeric digit that matches the expected English word (e.g., 1 === one)
+    let isCorrect = normalizedAnswer === normalizedCorrect;
+    if (!isCorrect) {
+        // Attempt to convert English word to number and check against numeric input
+        const numberMap = { 'one': '1', 'two': '2', 'three': '3', 'four': '4', 'five': '5', 
+                            'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'ten': '10' };
+        
+        const expectedNumber = numberMap[normalizedCorrect];
+        if (expectedNumber && ans.trim() === expectedNumber) {
+            isCorrect = true;
+        }
+    }
+
+    if(isCorrect){
       aScore++;aStreak++;
       $("#aScore").textContent=aScore;
       $("#aStreak").textContent=aStreak;
@@ -1566,27 +1591,38 @@ if (batchSel) {
 
   const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // Native Korean Number Logic (1-99)
+  // Sino Korean Numbers (for Date) - The core conversion logic relies on intToKoreanHangul,
+  // but the specific irregularities for month units (유월/시월) are handled in genDate.
+  
+  // Native Korean Number Logic (1-99) - Correctly constructs the full word string
   function numToNativeAge(n) {
-    if(n > 99) return ""; 
-    const units = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
-    const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+    // If n is invalid for Native (shouldn't happen here, but safe guard)
+    if(n < 1 || n > 99) return ""; 
     
-    // n < 10: just unit
-    if (n < 10) return units[n];
+    // Correct Native Korean units in word form (1-9)
+    const units = ["", "한", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉"];
+    // Correct Native Korean tens in word form (10, 20, 30, ...)
+    const tens = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
     
     const t = Math.floor(n/10);
     const u = n % 10;
     
-    // Special handling for 20 "seumu"
-    if (n === 20) return "스무";
+    let result = "";
+
+    // Handle TENS part (10, 20, 30, ...)
+    if (t > 0) {
+        // Use full tens word. Note: 10 uses '열' which is correct.
+        result += tens[t]; 
+    }
     
-    // Standard tens logic
-    // If u is 0 (10, 30, 40...), use pure ten word (except 20 handled above)
-    if (u === 0) return tens[t];
+    // Handle UNITS part (1, 2, 3, ...)
+    if (u > 0) {
+        // If it's a number from 1 to 9 (and not 10, 20 etc), use the unit directly
+        // If it's a composite (21, 32), concatenate the unit word.
+        result += units[u];
+    }
     
-    // If composite (21, 32...), use Ten + Unit
-    return tens[t] + units[u];
+    return result;
   }
 
   const genDate = () => {
@@ -1607,19 +1643,19 @@ if (batchSel) {
     // Construct Prompt: e.g., "January 24, 2011"
     const prompt = `${MONTHS_EN[monthIdx]} ${day}, ${year}`;
 
-    // Construct Answer (Sino-Korean text reading)
-    // Year
+    // --- Construct Answer (Sino-Korean text reading) ---
+    // Year (Use full Sino-Korean conversion)
     const yK = intToKoreanHangul(year).replace(" 원", "");
     
     // Month (Handle irregularities: 6월 -> 유월, 10월 -> 시월)
-    let mK = intToKoreanHangul(month).replace(" 원", "");
-    if (month === 6) mK = "유";
-    if (month === 10) mK = "시";
+    let mK_base = intToKoreanHangul(month).replace(" 원", "");
+    if (month === 6) mK_base = "유";
+    else if (month === 10) mK_base = "시";
     
     // Day
     const dK = intToKoreanHangul(day).replace(" 원", "");
 
-    const ansStr = `${yK}년 ${mK}월 ${dK}일`.trim();
+    const ansStr = `${yK}년 ${mK_base}월 ${dK}일`.trim();
 
     return {
       cat: "Date",
@@ -1633,7 +1669,7 @@ if (batchSel) {
   const genTime = () => {
     const h = Math.floor(Math.random()*12)+1;
     
-    // 20% chance for exactly 30 minutes to practice 'ban'
+    // 20% chance for exactly 30 minutes to practice '반'
     // 10% chance for exactly 0 minutes
     // Remaining 70% random 1-59 (excluding 30)
     let m;
@@ -1663,7 +1699,7 @@ if (batchSel) {
     
     const answers = [ansStd.replace(/\s+/g,"")];
     
-    // Special case for 30 minutes -> "ban"
+    // Special case for 30 minutes -> "반"
     if (m === 30) {
         const ansBan = `${amPmKor} ${hK}시 반`.trim();
         answers.push(ansBan.replace(/\s+/g,""));
@@ -1759,6 +1795,7 @@ if (batchSel) {
        // 120: 백스무살
        const remainder = age - 100;
        if (remainder === 0) korStr = "백살";
+       // We use numToNativeAge for the remainder (1-20)
        else korStr = "백" + numToNativeAge(remainder) + "살";
     }
 
@@ -1897,12 +1934,9 @@ if (batchSel) {
   showFlash();
   
   // PWA: register service worker
-  /* Disabled Service Worker registration to prevent console errors in blob/sandbox environments.
-     Uncomment the lines below if hosting on HTTPS/localhost.
-  */
-  // if ('serviceWorker' in navigator) {
-  //   navigator.serviceWorker.register('sw.js').catch(console.error);
-  // }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(console.error);
+  }
 
   // Optional: cache vocab data snapshot in localStorage (tiny)
   if (!localStorage.getItem('kt_items')) {
@@ -1965,19 +1999,23 @@ if (!localStorage.getItem('kt_cn')) {
   </div>
 </div>
 <script>
-/* Disabled external fetch for updates to prevent 404/protocol errors in standalone preview.
-*/
 async function loadWhatsNew() {
   try {
-    // Disabled fetch:
-    // const response = await fetch('/updates.json', { cache: 'no-store' });
-    // ...
-    
-    // Static placeholder:
+    const response = await fetch('/updates.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Failed to load updates');
+    const data = await response.json();
+
     const changelog = document.getElementById('swChangelog');
-    changelog.innerHTML = 'No updates available in offline mode.';
+    if (data.updates && data.updates.length) {
+      changelog.innerHTML = data.updates
+        .map(update => `• ${update.description}`)
+        .join('<br>');
+    } else {
+      changelog.innerHTML = 'No updates available.';
+    }
   } catch (err) {
     console.error(err);
+    document.getElementById('swChangelog').innerHTML = 'Failed to load updates (Check /updates.json path).';
   }
 }
 
@@ -2010,17 +2048,67 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
     modalEl._waitingWorker = worker || registration.waiting || null;
   }
 
-  // Service Worker logic disabled for standalone file execution
-  if ('serviceWorker' in navigator && location.protocol !== 'blob:' && location.protocol !== 'data:') {
-    // Original logic preserved but guarded
-    /*
-    navigator.serviceWorker.register('/sw.js').then(reg => { ... });
-    */
+  // Service Worker logic restored
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+
+      // If there's already a waiting worker (previous update installed) -> show modal
+      if (reg.waiting) {
+        setWaitingWorker(reg, reg.waiting);
+        showModal();
+      }
+
+      // Listen for updatefound: a new worker is installing
+      reg.addEventListener('updatefound', () => {
+        const newSW = reg.installing;
+        if (!newSW) return;
+        // when the state becomes 'installed' and there's a controller, it's an update
+        newSW.addEventListener('statechange', () => {
+          if (newSW.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              // NEW UPDATE READY — show modal and keep waiting worker reference
+              setWaitingWorker(reg, reg.waiting || newSW);
+              showModal();
+            } else {
+              // first-time install — ignore (no update prompt)
+            }
+          }
+        });
+      });
+
+    }).catch(console.error);
+
+    // When controller changes (new SW took control), reload to apply new cache
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (window._kotrainer_reloadPending) return;
+      window._kotrainer_reloadPending = true;
+      // small delay so UI can reflect action
+      setTimeout(() => location.reload(true), 500);
+    });
   }
 
   // Update button: instruct waiting SW to skipWaiting (only triggered by user)
   updateBtn.addEventListener('click', () => {
-    // Logic disabled
+    const waiting = modalEl._waitingWorker;
+    if (!waiting) {
+      // Fallback: message active controller (less common)
+      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
+      return;
+    }
+    // show spinner / feedback
+    spinner.classList.remove('hidden');
+    updateText.textContent = 'Updating...';
+
+    try {
+      // message the specific waiting worker
+      waiting.postMessage({ action: 'skipWaiting' });
+      // also message global controller as backup
+      navigator.serviceWorker.controller && navigator.serviceWorker.controller.postMessage({ action: 'skipWaiting' });
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Do NOT hide the modal permanently — we can hide it while waiting for controllerchange:
     hideModal();
   });
 
