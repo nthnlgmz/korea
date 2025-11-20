@@ -235,6 +235,8 @@
     <option value="batch5">Native Korean Numbers</option>
     <option value="batch6">Pointers to Review</option>
     <option value="batch7">Counting Units</option>
+       <option value="batch8">Preposition of Place</option>
+
 
   </select>
 </div>
@@ -668,6 +670,21 @@ document.addEventListener('DOMContentLoaded', () => {
     {id:100,ko:"신호등",en:"traffic lights"},
     {id:101,ko:"길거리",en:"street"}
   ];
+     const PREPOSITION_OF_PLACE = [
+  {id:1, ko:"안", en:"In / Inside"},
+  {id:2, ko:"위", en:"on top"},
+  {id:3, ko:"옆", en:"beside / next"},
+  {id:4, ko:"앞", en:"in front of"},
+  {id:5, ko:"밖", en:"outside"},
+  {id:6, ko:"왼쪽", en:"left side"},
+  {id:7, ko:"오른쪽", en:"right side"},
+  {id:8, ko:"아래 / 밑", en:"under / below"},
+  {id:9, ko:"가운데 / 중간", en:"Middle / Center"},
+  {id:10, ko:"뒤", en:"behind"},
+  {id:11, ko:"건너편", en:"Across from the street / Opposite side"},
+  {id:12, ko:"근처", en:"Near"},
+  {id:13, ko:"사이", en:"between"}
+];
   const NATIVE_KOREAN_NUMBERS = [
   // 1-10
   {id:1, ko:"하나", en:"One"},
@@ -1207,7 +1224,8 @@ const MOST_COMMON_KEYWORDS = [
   batch4: { start: 1, end: MOST_COMMON_KEYWORDS.length },
   batch5: { start: 1, end: NATIVE_KOREAN_NUMBERS.length },
   batch6: { start: 1, end: POINTERS_TO_REVIEW.length },
-  batch7: { start: 1, end: COUNTING_UNITS.length }
+  batch7: { start: 1, end: COUNTING_UNITS.length },
+  batch8: { start: 1, end: PREPOSITION_OF_PLACE.length }
 };
 
 
@@ -1234,6 +1252,7 @@ const MOST_COMMON_KEYWORDS = [
     case "batch5": return NATIVE_KOREAN_NUMBERS; 
     case "batch6": return POINTERS_TO_REVIEW;
     case "batch7": return COUNTING_UNITS; 
+    case "batch8": return PREPOSITION_OF_PLACE; 
     default: return ITEMS;
   }
 }
@@ -1983,6 +2002,9 @@ if (!localStorage.getItem('kt_ptr')) {
 }
 if (!localStorage.getItem('kt_cn')) {
   localStorage.setItem('kt_cn', JSON.stringify(COUNTING_UNITS));
+}
+if (!localStorage.getItem('kt_pof')) {
+  localStorage.setItem('kt_pof', JSON.stringify(PREPOSITION_OF_PLACE));
 }
 
 });
