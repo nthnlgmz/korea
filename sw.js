@@ -1,5 +1,5 @@
 // CHANGE THIS every deployment
-const CACHE_VERSION = "v7.1.1.1";
+const CACHE_VERSION = "v7.2";
 
 // Final cache name
 const CACHE_NAME = `kotrainer-${CACHE_VERSION}`;
