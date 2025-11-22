@@ -2,6 +2,9 @@
   "updates": [
     {
       "description": "Added new batch of vocabs"
+    },
+    {
+      "description": "Combined the 1st and 2nd batch of vocabs into one."
     }
   ]
 }
