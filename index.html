@@ -2198,6 +2198,9 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
   function showModal(){
     modalEl.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    if (updateSound) {
+      updateSound.play().catch(e => console.warn("Audio play failed:", e));
+    }
   }
   function hideModal(){
     modalEl.classList.add('hidden');
@@ -2295,6 +2298,6 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
   7. Change the cache version in sw.js */
    
 </script>
-
+<audio id="updateSound" src="https://github.com/nthnlgmz/korea/raw/refs/heads/main/aternos.mp3" preload="auto"></audio>
 </body>
 </html>
