@@ -10,7 +10,7 @@ const CORE_ASSETS = [
   './index.html',
   './manifest.webmanifest',
   './logo.ico',
-
+  'https://github.com/nthnlgmz/korea/raw/refs/heads/main/aternos.mp3',
   // External assets (cached after 1st load)
   'https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap',
