@@ -1,5 +1,5 @@
 // CHANGE THIS every deployment
-const CACHE_VERSION = "v7.2.3.1";
+const CACHE_VERSION = "v7.2.3.2";
 
 // Final cache name
 const CACHE_NAME = `kotrainer-${CACHE_VERSION}`;
@@ -10,7 +10,7 @@ const CORE_ASSETS = [
   './index.html',
   './manifest.webmanifest',
   './logo.ico',
-  'https://github.com/nthnlgmz/korea/raw/refs/heads/main/aternos.mp3',
+  './aternos.mp3',
   // External assets (cached after 1st load)
   'https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.5.2/flowbite.min.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap',
