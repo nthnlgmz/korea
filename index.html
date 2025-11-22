@@ -2198,9 +2198,6 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
   function showModal(){
     modalEl.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
-    if (updateSound) {
-      updateSound.play().catch(e => console.warn("Audio play failed:", e));
-    }
   }
   function hideModal(){
     modalEl.classList.add('hidden');
@@ -2256,6 +2253,9 @@ document.addEventListener('DOMContentLoaded', loadWhatsNew);
 
   // Update button: instruct waiting SW to skipWaiting (only triggered by user)
   updateBtn.addEventListener('click', () => {
+       if (updateSound) {
+      updateSound.play().catch(e => console.warn("Audio play failed on click:", e));
+    }
     const waiting = modalEl._waitingWorker;
     if (!waiting) {
       // Fallback: message active controller (less common)
