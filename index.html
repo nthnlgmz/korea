@@ -239,7 +239,11 @@
     <option value="batch7">Preposition of Place</option>
     <option value="batch8">New Set of Vocabs</option>
     <option value="batch9">Exam</option>
-
+<option value="batch10">Adjectives</option>
+<option value="batch11">Antonyms</option>
+<option value="batch12">Nouns</option>
+<option value="batch13">Verbs</option>
+       
 
   </select>
 </div>
@@ -2567,7 +2571,11 @@ const MOST_COMMON_KEYWORDS = [
   batch6: { start: 1, end: COUNTING_UNITS.length },
   batch7: { start: 1, end: PREPOSITION_OF_PLACE.length },
   batch8: { start: 1, end: NEW.length },
-  batch9: { start: 1, end: E.length }
+  batch9: { start: 1, end: E.length },
+       batch10: { start: 1, end: SET_OF_ADJECTIVES.length },
+batch11: { start: 1, end: ANTONYMS.length },
+batch12: { start: 1, end: NOUNS.length },
+batch13: { start: 1, end: VERBS.length }
 };
 
 
@@ -2596,6 +2604,11 @@ const MOST_COMMON_KEYWORDS = [
     case "batch7": return PREPOSITION_OF_PLACE; 
     case "batch8": return NEW;
     case "batch9": return E;
+    case "batch10": return SET_OF_ADJECTIVES;
+case "batch11": return ANTONYMS;
+case "batch12": return NOUNS;
+case "batch13": return VERBS;
+            
     default: return VOCABS;
   }
 }
